@@ -1,0 +1,18 @@
+# Dependências do projeto
+node_modules/
+
+# Arquivos de variáveis de ambiente
+.env
+.env.local
+.env.*.local
+
+# Pastas de IDE e EDITORES
+.vscode/
+.idea/
+
+# Pastas dedicadas de saida
+dist/
+build/
+
+# Arquivos de Cache
+*.tsbuildifo
