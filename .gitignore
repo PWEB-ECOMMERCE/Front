@@ -13,6 +13,7 @@ node_modules/
 # Pastas dedicadas de saida
 dist/
 build/
+.next/
 
 # Arquivos de Cache
 *.tsbuildifo
