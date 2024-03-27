@@ -83,10 +83,22 @@ function Login() {
               id="password"
               autoComplete="current-password"
             />
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Lembrar de mim"
-            />
+            <Box
+              sx={{
+                display:'flex',
+                flexDirection:'column',
+                marginX: '12px'
+              }}
+            >
+              <FormControlLabel
+                control={<Checkbox value="remember" color="primary" />}
+                label="Sou administrador"
+              />
+              <FormControlLabel
+                control={<Checkbox value="remember" color="primary" />}
+                label="Lembrar de mim"
+              />
+            </Box>
             <Button
               type="submit"
               fullWidth
@@ -102,7 +114,7 @@ function Login() {
                 </Link>
               </Grid>
               <Grid item>
-                <Link href="#" variant="body2">
+                <Link href="/signup" variant="body2">
                   {"Não tem conta ainda? Cadastre-se"}
                 </Link>
               </Grid>

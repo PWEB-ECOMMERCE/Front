@@ -10,6 +10,8 @@ import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
 import { ThemeProvider } from '@mui/material/styles';
 import theme from 'utils/theme'
 
@@ -41,7 +43,7 @@ export default function SignUp() {
 
   return (
     <ThemeProvider theme={theme}>
-      <Container component="main" maxWidth="xs">
+      <Container component="main" maxWidth="sm">
         <CssBaseline />
         <Box
           sx={{
@@ -133,6 +135,20 @@ export default function SignUp() {
                 />
               </Grid>
             </Grid>
+            <FormControlLabel
+              sx={{marginY:"8px",marginX:"4px"}}
+              control={<Checkbox value="remember" color="primary" />}
+              label={
+                <p>
+                  Eu aceito os
+                  <Link
+                    href="/login"
+                  >
+                    {" Termos de Condições"}
+                  </Link>
+                </p>
+              }
+            />
             <Box
               sx={{
                 display:'flex',
@@ -144,6 +160,7 @@ export default function SignUp() {
                 variant="contained"
                 color="primary"
                 sx={{ mt: 3, mb: 2, mr: 2, backgroundColor:"button.buttonModest"}}
+                href="/login"
               >
                 Cancelar
               </Button>
@@ -152,13 +169,13 @@ export default function SignUp() {
                 variant="contained"
                 sx={{ mt: 3, mb: 2,color:"white", backgroundColor:"button.buttonFlashy" }}
               >
-                Continuar
+                Cadastrar
               </Button>
             </Box>
 
             <Grid container justifyContent="flex-end">
               <Grid item>
-                <Link href="#" variant="body2">
+                <Link href="/login" variant="body2">
                   Já tem uma conta? Clique aqui
                 </Link>
               </Grid>
