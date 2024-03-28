@@ -1,7 +1,7 @@
 // -import './global.css'
 import React from 'react'
 import { Inter } from 'next/font/google'
-import ThemeRegistry from 'utils/ThemeRegistry'
+import ThemeRegistry from '@/utils/ThemeRegistry'
 
 const inter = Inter({subsets: [ 'latin' ]})
 export default function RootLayout({ children }) {
