@@ -6,7 +6,7 @@ let theme = createTheme({
      main: "#a0a0a0",
    },
    secondary: {
-     main: "#a0a0a0",
+     main: "#246BA2",
    },
    button: {
      buttonFlashy:"#0996ff",
