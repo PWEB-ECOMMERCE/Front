@@ -1,12 +1,16 @@
 {
   "compilerOptions":{
+    "module":"CommonJS",
+    "target":"ES6",
     "baseUrl": ".",
     "paths":{
       "@/components/*":["src/components/*"],
       "@/api/*":["src/api/*"],
       "@/utils/*":["src/utils/*"],
       "@/mocks/*":["src/mocks/*"],
-      "@/hooks/*":["src/hooks/*"]
+      "@/hooks/*":["src/hooks/*"],
+      "@/contexts/*":["src/contexts/*"]
     }
-  }
+  },
+  "exclude":["node_modules"]
 }
