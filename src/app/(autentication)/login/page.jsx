@@ -1,5 +1,7 @@
 'use client';
-import * as React from 'react';
+import { useContext } from 'react';
+import { AuthContext } from '@/contexts/AuthContext';
+
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -12,8 +14,6 @@ import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import { ThemeProvider } from '@mui/material/styles';
-import theme from '@/utils/theme'
 
 function Copyright(props) {
   return (
@@ -32,17 +32,20 @@ function Copyright(props) {
 
 
 function Login() {
-  const handleSubmit = (event) => {
+
+  const {signIn} = useContext(AuthContext);
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+    const email = data.get('email');
+    // Should handle encryptation of password before sending to the server
+    const password = data.get('password');
+    const result = await signIn({email,password})
+    console.log(result);
   };
 
   return (
-    <ThemeProvider theme={theme}>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <Box
@@ -62,7 +65,7 @@ function Login() {
           <Typography component="h1" variant="h5">
             Sign in
           </Typography>
-          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+          <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
             <TextField
               margin="normal"
               required
@@ -123,7 +126,6 @@ function Login() {
         </Box>
         <Copyright sx={{ mt: 8, mb: 4 }} />
       </Container>
-    </ThemeProvider>
   );
 }
 export default Login;
