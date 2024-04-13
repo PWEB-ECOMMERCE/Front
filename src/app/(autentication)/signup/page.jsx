@@ -1,5 +1,5 @@
 'use client';
-import * as React from 'react';
+import { useContext } from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -12,8 +12,9 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
-import { ThemeProvider } from '@mui/material/styles';
-import theme from '@/utils/theme'
+
+import { useRouter } from 'next/navigation';
+import { AuthContext } from '@/contexts/AuthContext';
 
 function Copyright(props) {
   return (
@@ -28,21 +29,45 @@ function Copyright(props) {
   );
 }
 
-// TODO remove, this demo shouldn't need to reset the theme.
-
-
 export default function SignUp() {
-  const handleSubmit = (event) => {
+
+  const router = useRouter();
+  const { setUser } = useContext(AuthContext);
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
+    const user = {
       email: data.get('email'),
-      password: data.get('password'),
-    });
+      // Encrypt password
+      senha: data.get('password'),
+      nome: `${data.get('firstName')} ${data.get('lastName')}`,
+      endereco: data.get('address'),
+      login: data.get('login')
+    }
+    try {
+
+      const data = await fetch("http://localhost:8080/usuarios", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(user)
+      })
+
+      const userId = await data.json();
+      const userReq = await fetch(`http://localhost:8080/usuarios/${userId.usuarioUUID}`)
+      const userData = await userReq.json();
+
+      setUser(userData);
+      router.push("/")
+
+    } catch (e){
+      console.log(e.message);
+    }
   };
 
   return (
-    <ThemeProvider theme={theme}>
       <Container component="main" maxWidth="sm">
         <CssBaseline />
         <Box
@@ -184,6 +209,5 @@ export default function SignUp() {
           <Copyright sx={{ mt: 5 }} />
         </Box>
       </Container>
-    </ThemeProvider>
   );
 }

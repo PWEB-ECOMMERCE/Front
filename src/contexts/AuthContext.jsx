@@ -23,8 +23,12 @@ export function AuthProvider({children}){
     })
   }
 
+  async function signOut(){
+    setUser({ });
+  }
+
   return (
-    <AuthContext.Provider value={{user, isAuthenticated, signIn}}>
+    <AuthContext.Provider value={{user, isAuthenticated, signIn, setUser}}>
       {children}
     </AuthContext.Provider>
   )

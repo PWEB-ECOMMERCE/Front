@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
@@ -8,10 +8,11 @@ import { AppBar, Badge, Toolbar, Button, Box, Typography, Link as MUILink } from
 
 import Link from 'next/link';
 
-export default function Header({ search, cart }) {
-  const [enableSearch, setEnableSearch] = useState(search);
-  const [enableCart, setEnableCart] = useState(cart);
-  const [logged, setLogged] = useState(true);
+import { AuthContext } from '@/contexts/AuthContext';
+
+export default function Header() {
+
+  const { user, isAuthenticated } = useContext(AuthContext);
 
 
   return (
@@ -34,7 +35,8 @@ export default function Header({ search, cart }) {
             justifyContent: 'space-between',
           }}>
           {
-            logged &&
+            !isAuthenticated
+            ?
             <Box
               sx={{
                 display: 'flex',
@@ -50,6 +52,19 @@ export default function Header({ search, cart }) {
                 <MUILink underline="none" href="/signup" component={Link}>Signup</MUILink>
               </Button>
             </Box>
+              :
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'center',
+                gap: 2,
+                mx: 2,
+              }}>
+              <Button variant='outlined' sx={{ my: '20px', borderColor:'grey' }} color='secondary'>
+                <MUILink underline="none" href="/login" component={Link}>Sign Out</MUILink>
+              </Button>
+            </Box>
           }
           <Box
             sx={{
@@ -59,12 +74,12 @@ export default function Header({ search, cart }) {
               alignItems: 'center',
               gap: 2,
             }}>
-            {enableCart && (
+            {!user?.isAdmin && (
               <Badge badgeContent={2} color='secondary'>
                 <ShoppingCartIconOutlined></ShoppingCartIconOutlined>
               </Badge>
             )}
-            {enableSearch && (
+            {!user?.isAdmin && (
               <Autocomplete
                 disableClearable
                 freeSolo
