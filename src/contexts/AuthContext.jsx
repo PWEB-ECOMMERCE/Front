@@ -12,7 +12,7 @@ export function AuthProvider({children}){
 
   async function signIn({email,password}){
 
-    const data = await fetch("http://localhost:8080/usuarios")
+    const data = await fetch(`${process.env.NEXT_PUBLIC_API}/usuarios`)
     const json = await data.json();
     console.log(json);
 

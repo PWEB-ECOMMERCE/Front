@@ -47,7 +47,7 @@ export default function SignUp() {
     }
     try {
 
-      const data = await fetch("http://localhost:8080/usuarios", {
+      const data = await fetch(`${process.env.NEXT_PUBLIC_API}/usuarios`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -56,7 +56,7 @@ export default function SignUp() {
       })
 
       const userId = await data.json();
-      const userReq = await fetch(`http://localhost:8080/usuarios/${userId.usuarioUUID}`)
+      const userReq = await fetch(`${process.env.NEXT_PUBLIC_API}/usuarios/${userId.usuarioUUID}`)
       const userData = await userReq.json();
 
       setUser(userData);

@@ -2,9 +2,7 @@
 node_modules/
 
 # Arquivos de variáveis de ambiente
-.env
-.env.local
-.env.*.local
+.env*.local
 
 # Pastas de IDE e EDITORES
 .vscode/
