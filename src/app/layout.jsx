@@ -1,7 +1,7 @@
 import React from 'react';
 import { Inter } from 'next/font/google';
 import ThemeRegistry from '@/utils/ThemeRegistry';
-import { Providers } from './providers';
+import { Providers } from '@/components/providers/Providers';
 
 const inter = Inter({subsets: [ 'latin' ]})
 export default async function RootLayout({ children }) {
