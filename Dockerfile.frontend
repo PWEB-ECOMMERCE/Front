@@ -1,5 +1,7 @@
 ARG node=node:18.20.2-slim
+
 FROM ${node} as deps
+LABEL org.opencontainers.image.authors="Dante de Araújo"
 WORKDIR /home/app
 COPY package*.json yarn.lock ./
 RUN yarn install

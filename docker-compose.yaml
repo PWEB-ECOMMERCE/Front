@@ -1,0 +1,87 @@
+# This is our compose file that will handle the containerization of our application
+# Here we have our frontend, our backend and our database create, they will build
+# some images (front and backend) and will use a pre-built postgres image for this
+# We can improve some aspects:
+#   - We are currently exposing our backend service to the host, would be better
+#     to use a reverse-proxy to handle our host requests inside our frontend app
+#   - We are currently using containers with root permissions! That is a bad
+#     pratice
+#   - This docker compose was not featured for production environments, only dev.
+name: smd-ecommerce
+services:
+  frontend:
+    image: ecommerce/front
+    build:
+      context: ./Dockerfile.frontend
+    ports:
+      - 6001:3000
+    env_file:
+      - path: ./.env.development
+        required: false
+      - path: ./.env.development.local
+        required: false
+      - path: ./.env.production
+        required: false
+      - path: ./.env.production.local
+        required: false
+    networks:
+      - app_network
+    depends_on:
+      database:
+        condition: service_healthy
+        restart: true
+      backend:
+        condition: service_started
+        restart: true
+  backend:
+    image: ecommerce/backend
+    build:
+      context: .
+      dockerfile: ./Dockerfile.backend
+    ports:
+      - 8080:8080
+    healthcheck:
+      test: ["CMD","curl","-f","http://$${BACKEND_HOST}:8080/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    env_file:
+      - path: ./.env.development
+        required: false
+      - path: ./.env.development.local
+        required: false
+      - path: ./.env.production
+        required: false
+      - path: ./.env.production.local
+        required: false
+    networks:
+      - app_network
+    depends_on:
+      database:
+        condition: service_healthy
+        restart: true
+  database:
+    image: 'postgres:latest'
+    env_file:
+      - path: ./.env.development
+        required: false
+      - path: ./.env.development.local
+        required: false
+      - path: ./.env.production
+        required: false
+      - path: ./.env.production.local
+        required: false
+    volumes:
+      - ./db-data:/var/lib/postgresql/data
+    networks:
+      - app_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
+      interval: 30s
+      timeout: 60s
+      retries: 5
+      start_period: 80s
+
+networks:
+  app_network:
+    driver: bridge
