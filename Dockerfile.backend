@@ -3,7 +3,7 @@ ARG IMAGE=maven:3.8-amazoncorretto-21-al2023
 # Cloning our source code
 FROM alpine:latest as checkout
 LABEL org.opencontainers.image.authors="Dante de Araújo"
-ENV GIT_ACCESS_TOKEN=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
+ENV GIT_ACCESS_TOKEN=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
 WORKDIR /app
 RUN apk --no-cache add git \
     && git clone https://dantearaujo1:${GIT_ACCESS_TOKEN}@github.com/PWEB-ECOMMERCE/Back.git backend
