@@ -1,20 +1,19 @@
-# Project Dependencies
+# Dependências do projeto
 node_modules/
 
-# Local Environment variables (NEXT WILL PREFER THE .local over the others)
-.env*.local
+# Arquivos de variáveis de ambiente
+.env
+.env.local
+.env.*.local
 
-# Configs of editors
+# Pastas de IDE e EDITORES
 .vscode/
 .idea/
 
-# production folders
+# Pastas dedicadas de saida
 dist/
 build/
 .next/
 
-# Cache files
+# Arquivos de Cache
 *.tsbuildifo
-
-# Volumes of docker
-db-data/
