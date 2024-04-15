@@ -1,9 +1,0 @@
-.env*.local
-.git/
-
-node_modules/
-docs/
-
-.next/
-build/
-dist/
