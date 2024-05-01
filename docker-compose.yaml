@@ -12,7 +12,8 @@ services:
   frontend:
     image: ecommerce/front
     build:
-      context: ./Dockerfile.frontend
+      context: .
+      dockerfile: ./Dockerfile.frontend
     ports:
       - 6001:3000
     env_file:
