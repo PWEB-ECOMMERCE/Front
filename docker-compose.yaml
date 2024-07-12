@@ -73,7 +73,7 @@ services:
       - path: ./.env.production.local
         required: false
     volumes:
-      - ./db-data:/var/lib/postgresql/data
+      - db-data:/var/lib/postgresql/data
     networks:
       - app_network
     healthcheck:
@@ -86,3 +86,5 @@ services:
 networks:
   app_network:
     driver: bridge
+volumes:
+  db-data:

@@ -1,0 +1,6 @@
+services:
+  frontend:
+    volumes:
+      - type: bind
+        source: .
+        target: /home/app
