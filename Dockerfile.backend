@@ -7,7 +7,8 @@ LABEL org.opencontainers.image.authors="Dante de Araújo"
 ENV GIT_ACCESS_TOKEN=11AFBAO7A0lTdXgsbX0C4N_mgBrW4ZDnMQVLgIXxZyApaDZAyZsXZJrp62xC1Up8J0SV43UHHQtK0cGGCG
 WORKDIR /app
 RUN apk --no-cache add git \
-    && git clone https://dantearaujo1:${GIT_ACCESS_TOKEN}@github.com/PWEB-ECOMMERCE/Back.git backend
+    && git clone https://dantearaujo1:${GIT_ACCESS_TOKEN}@github.com/PWEB-ECOMMERCE/Back.git backend \
+    && cd backend && git checkout feat/login
 
 # Downloading our dependencies
 FROM ${IMAGE} AS deps

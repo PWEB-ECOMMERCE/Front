@@ -1,9 +1,12 @@
 // Import styles from './page.module.css'
 'use client';
 import { Stack, Button, FormControl, InputLabel, OutlinedInput, FormHelperText, Typography } from '@mui/material';
-
+import { AuthContext } from '@/contexts/AuthContext';
+import { useContext } from 'react';
 
 export default function AccountForm() {
+  const { user } = useContext(AuthContext);
+  console.log(user)
   return (
     <Stack padding={2} gap={2} sx={{width:"30%"}}>
       <Typography variant="h5"> Dados Cadastrais </Typography>

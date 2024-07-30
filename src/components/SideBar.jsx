@@ -1,14 +1,29 @@
 'use client';
-import { Box, Stack, List, ListItemButton } from '@mui/material';
+import { Box, Stack, List, ListItemButton, Link } from '@mui/material';
 import { useState, useContext } from 'react';
 
 import { AuthContext } from '@/contexts/AuthContext';
 
 // Just for testing purposes
 // The structure should be a list of objects {label, href}
-const clientButtons = ['Inicio', 'Meus Pedidos', 'Produtos', 'Conta'];
-const anonymousButtons = ['Inicio','Produtos','List Item','List Item','List Item'];
-const adminButtons = ['Inicio', 'Produtos e Categorias', 'Vendas', 'Conta', 'Sair'];
+const clientButtons = [
+  {name:'Inicio',to:'/'},
+  {name:'Meus Pedidos',to:'/'},
+  {name:'Produtos',to:'/'},
+  {name:'Conta',to:"/account"},
+  {name:'Sair',to:'/logout'},
+];
+const anonymousButtons = [
+  {name:'Inicio',to:'/'},
+  {name:'Produtos',to:'/'},
+];
+const adminButtons = [
+  {name:'Inicio',to:'/'},
+  {name:'Produtos e Categorias',to:'/'},
+  {name:'Vendas',to:'/'},
+  {name:'Conta',to:'/'},
+  {name:'Sair',to:'/logout'},
+];
 
 export default function SideBar() {
 
@@ -35,11 +50,13 @@ export default function SideBar() {
                   selected={index === selectedIndex}
                   onClick={(event)=> handleListItemClick(event,index)}
                   background='primary'
+                  component={Link}
+                  to={item.to}
                   sx={{
                     px: 2,
                     py: '10px',
                   }}>
-                  {item}
+                  {item.name}
                 </ListItemButton>
               );
           })}

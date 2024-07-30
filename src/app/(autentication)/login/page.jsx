@@ -1,6 +1,6 @@
 'use client';
 import { useContext } from 'react';
-import { AuthContext } from '@/contexts/AuthContext';
+import { useRouter } from 'next/navigation';
 
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
@@ -15,35 +15,53 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 
-function Copyright(props) {
-  return (
-    <Typography variant="body2" color="text.secondary" align="center" {...props}>
-      {'Copyright © '}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
+import * as yup from 'yup';
+import { useFormik } from 'formik';
 
-// TODO remove, this demo shouldn't need to reset the theme.
+import Copyright from '@/components/Copyright';
+import { AuthContext } from '@/contexts/AuthContext';
 
 
+const validationSchema = yup.object({
+  email: yup
+    .string('Digite seu email')
+    .email('Digite um email válido')
+    .required('O email é obrigatório'),
+  password: yup
+    .string('Digite seu password')
+    .min(8,'A senha precisa conter no mínimo 8 caracteres')
+    .required('A senha é obrigatória'),
+})
+
+/**
+ * Login Page Component with form
+ *
+ * @returns {JSXReact} [A rendered component of the page]
+ */
 function Login() {
 
-  const {signIn} = useContext(AuthContext);
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    const email = data.get('email');
-    // Should handle encryptation of password before sending to the server
-    const password = data.get('password');
-    const result = await signIn({email,password})
-    console.log(result);
-  };
+  const { signIn, error, loading } = useContext(AuthContext);
+  const router = useRouter();
+  const formik = useFormik({
+    initialValues: {
+      email: '',
+      password: '',
+      admin: false,
+      remember: false,
+    },
+    validationSchema: validationSchema,
+    onSubmit: async (values) => {
+      const { email, password } = values;
+      try{
+        const result = await signIn({email,password})
+        router.push("/")
+      } catch (err) {
+        console.log(err);
+      } finally{
+        console.log(error);
+      }
+    }
+  })
 
   return (
       <Container component="main" maxWidth="xs">
@@ -65,14 +83,24 @@ function Login() {
           <Typography component="h1" variant="h5">
             Sign in
           </Typography>
-          <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
+          <Box
+            component="form"
+            onSubmit={formik.handleSubmit}
+            noValidate
+            sx={{ mt: 1 }}
+          >
             <TextField
               margin="normal"
               required
               fullWidth
-              id="login"
-              label="Login"
-              name="login"
+              id="email"
+              name="email"
+              label="Email"
+              value={formik.values.email}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              error={formik.touched.email && Boolean(formik.errors.email)}
+              helperText={formik.touched.email && formik.errors.email}
               autoComplete="username"
               autoFocus
             />
@@ -81,9 +109,14 @@ function Login() {
               required
               fullWidth
               name="password"
-              label="Senha"
               type="password"
               id="password"
+              label="Senha"
+              value={formik.values.password}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              error={formik.touched.password && Boolean(formik.errors.password)}
+              helperText={formik.touched.password && formik.errors.password}
               autoComplete="current-password"
             />
             <Box
@@ -107,8 +140,9 @@ function Login() {
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2, color:'white', backgroundColor:"button.buttonFlashy" }}
+              disabled={formik.isSubmitting}
             >
-              Entrar
+              {formik.isSubmitting?"Logando....":"Entrar"}
             </Button>
             <Grid container>
               <Grid item xs>

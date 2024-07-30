@@ -10,10 +10,24 @@ import Link from 'next/link';
 
 import { AuthContext } from '@/contexts/AuthContext';
 
+const getInitialState = () => {
+  const items = localStorage.getItem("cart");
+  return items ? JSON.parse(items) : null;
+}
+
 export default function Header() {
 
-  const { user, isAuthenticated } = useContext(AuthContext);
+  const { user, isAuthenticated, signOut } = useContext(AuthContext);
 
+  const [cart, setCart] = useState();
+  const cartQnt = cart?.length;
+
+  useEffect(() => {
+    const items = getInitialState();
+    if(items){
+      setCart(items);
+    }
+  },[]);
 
   return (
     <AppBar elevation={0} color='transparent' position='static' sx={{ height: 64, border: '1px solid grey' }}>
@@ -61,8 +75,8 @@ export default function Header() {
                 gap: 2,
                 mx: 2,
               }}>
-              <Button variant='outlined' sx={{ my: '20px', borderColor:'grey' }} color='secondary'>
-                <MUILink underline="none" href="/login" component={Link}>Sign Out</MUILink>
+              <Button variant='outlined' sx={{ my: '20px', borderColor:'grey' }} color='secondary' onClick={signOut}>
+                <MUILink underline="none" href="/" component={Link}>Sign Out</MUILink>
               </Button>
             </Box>
           }
@@ -75,9 +89,11 @@ export default function Header() {
               gap: 2,
             }}>
             {!user?.isAdmin && (
-              <Badge badgeContent={2} color='secondary'>
-                <ShoppingCartIconOutlined></ShoppingCartIconOutlined>
-              </Badge>
+              <Button color='primary'>
+                <Badge badgeContent={cartQnt} color='secondary'>
+                  <ShoppingCartIconOutlined></ShoppingCartIconOutlined>
+                </Badge>
+              </Button>
             )}
             {!user?.isAdmin && (
               <Autocomplete

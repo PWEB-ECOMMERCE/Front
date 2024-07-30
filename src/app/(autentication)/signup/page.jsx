@@ -13,59 +13,91 @@ import Container from '@mui/material/Container';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 
+import * as yup from 'yup';
+import { useFormik, ErrorMessage } from 'formik';
+
+import Copyright from '@/components/Copyright';
 import { useRouter } from 'next/navigation';
 import { AuthContext } from '@/contexts/AuthContext';
 
-function Copyright(props) {
-  return (
-    <Typography variant="body2" color="text.secondary" align="center" {...props}>
-      {'Copyright © '}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
+const validationSchema = yup.object({
+  firstName: yup
+    .string('Digite seu nome')
+    .required('O nome é obrigatório'),
+  lastName: yup
+    .string('Digite seu sobrenome')
+    .required('O sobrenome é obrigatório'),
+  address: yup
+    .string('Digite seu endereço')
+    .required('O endereço é obrigatório'),
+  email: yup
+    .string('Digite seu email')
+    .email('Digite um email válido')
+    .required('O email é obrigatório'),
+  login: yup
+    .string('Digite um nome de usuário')
+    .min(3,'Seu usuário deve ter ao menos 3 caracteres')
+    .required('O nome de usuário é obritatório'),
+  password: yup
+    .string('Digite seu password')
+    .min(8,'A senha precisa conter no mínimo 8 caracteres')
+    .required('A senha é obrigatória'),
+  terms: yup
+    .boolean().oneOf([true], 'Aceite nossos termos e condições')
+})
 
+/**
+ * SignUp Page Component with form
+ *
+ * @returns {JSXReact} [A rendered component of the page]
+ */
 export default function SignUp() {
 
   const router = useRouter();
   const { setUser } = useContext(AuthContext);
+  const form = useFormik({
+    initialValues:{
+      firstName:'',
+      lastName:'',
+      address:'',
+      email:'',
+      login:'',
+      password:'',
+      terms:false,
+    },
+    validationSchema: validationSchema,
+    onSubmit: async (formData) => {
+      // Removing the checkbox state for now because our
+      // BE doesnt have this feature
+      const dataToSubmit = {
+        nome: formData.firstName + " " + formData.lastName,
+        email: formData.email,
+        endereco: formData.address,
+        login: formData.login,
+        senha: formData.password,
+      }
+      try {
+        const data = await fetch(`${process.env.NEXT_PUBLIC_API}/usuarios`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(dataToSubmit)
+        })
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    const user = {
-      email: data.get('email'),
-      // Encrypt password
-      senha: data.get('password'),
-      nome: `${data.get('firstName')} ${data.get('lastName')}`,
-      endereco: data.get('address'),
-      login: data.get('login')
+        const userId = await data.json();
+        const userReq = await fetch(`${process.env.NEXT_PUBLIC_API}/usuarios/${userId.usuarioUUID}`)
+        const userData = await userReq.json();
+
+        setUser(userData);
+        console.log(userData);
+        router.push("/")
+
+      } catch (e){
+        console.log(e.message);
+      }
     }
-    try {
-
-      const data = await fetch(`${process.env.NEXT_PUBLIC_API}/usuarios`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(user)
-      })
-
-      const userId = await data.json();
-      const userReq = await fetch(`${process.env.NEXT_PUBLIC_API}/usuarios/${userId.usuarioUUID}`)
-      const userData = await userReq.json();
-
-      setUser(userData);
-      router.push("/")
-
-    } catch (e){
-      console.log(e.message);
-    }
-  };
+  });
 
   return (
       <Container component="main" maxWidth="sm">
@@ -95,74 +127,110 @@ export default function SignUp() {
               Insira suas informações
             </Typography>
           </Box>
-          <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 2 }}>
+          <Box
+            component="form"
+            onSubmit={form.handleSubmit}
+            noValidate
+            sx={{ mt: 2 }}
+          >
             <Grid container spacing={2}>
               <Grid item xs={12}>
                 <TextField
-                  autoComplete="given-name"
                   name="firstName"
-                  required
-                  fullWidth
                   id="firstName"
                   label="Nome"
+                  value={form.values.firstName}
+                  onChange={form.handleChange}
+                  onBlur={form.handleBlur}
+                  error={form.touched.firstName && Boolean(form.errors.firstName)}
+                  helperText={form.touched.firstName && form.errors.firstName}
+                  autoComplete="given-name"
+                  fullWidth
                   autoFocus
                 />
               </Grid>
               <Grid item xs={12}>
                 <TextField
-                  required
-                  fullWidth
                   id="lastName"
-                  label="Sobrenome"
                   name="lastName"
+                  label="Sobrenome"
+                  value={form.values.lastName}
+                  onChange={form.handleChange}
+                  onBlur={form.handleBlur}
+                  error={form.touched.lastName && Boolean(form.errors.lastName)}
+                  helperText={form.touched.lastName && form.errors.lastName}
+                  fullWidth
                   autoComplete="family-name"
                 />
               </Grid>
               <Grid item xs={12}>
                 <TextField
-                  required
-                  fullWidth
                   id="address"
-                  label="Endereço"
                   name="address"
+                  label="Endereço"
+                  value={form.values.address}
+                  onChange={form.handleChange}
+                  onBlur={form.handleBlur}
+                  error={form.touched.address && Boolean(form.errors.address)}
+                  helperText={form.touched.address && form.errors.address}
+                  fullWidth
                   autoComplete="family-name"
                 />
               </Grid>
               <Grid item xs={12}>
                 <TextField
-                  required
-                  fullWidth
                   id="email"
-                  label="Email"
                   name="email"
+                  label="Email"
+                  value={form.values.email}
+                  onChange={form.handleChange}
+                  onBlur={form.handleBlur}
+                  error={form.touched.email && Boolean(form.errors.email)}
+                  helperText={form.touched.email && form.errors.email}
+                  fullWidth
                   autoComplete="email"
                 />
               </Grid>
               <Grid item xs={12}>
                 <TextField
-                  required
-                  fullWidth
                   id="login"
-                  label="Login"
                   name="login"
+                  label="Login"
+                  value={form.values.login}
+                  onChange={form.handleChange}
+                  onBlur={form.handleBlur}
+                  error={form.touched.login && Boolean(form.errors.login)}
+                  helperText={form.touched.login && form.errors.login}
+                  fullWidth
                   autoComplete="username"
                 />
               </Grid>
               <Grid item xs={12}>
                 <TextField
-                  required
-                  fullWidth
                   name="password"
+                  id="password"
                   label="Senha"
                   type="password"
-                  id="password"
+                  value={form.values.password}
+                  onChange={form.handleChange}
+                  onBlur={form.handleBlur}
+                  error={form.touched.password && Boolean(form.errors.password)}
+                  helperText={form.touched.password && form.errors.password}
+                  fullWidth
                   autoComplete="new-password"
                 />
               </Grid>
             </Grid>
             <FormControlLabel
-              sx={{marginY:"8px",marginX:"4px"}}
-              control={<Checkbox value="remember" color="primary" />}
+              sx={{marginTop:"8px",marginX:"4px"}}
+              control={
+                <Checkbox
+                  checked={form.values.terms}
+                  onChange={form.handleChange}
+                  name="terms"
+                  color="primary"
+                />
+              }
               label={
                 <p>
                   Eu aceito os
@@ -174,6 +242,11 @@ export default function SignUp() {
                 </p>
               }
             />
+            {form.errors.terms && form.touched.terms && (
+              <Typography sx={{marginTop:"0px",marginX:"16px"}} color="error" variant="body2">
+                {form.errors.terms}
+              </Typography>
+            )}
             <Box
               sx={{
                 display:'flex',
@@ -181,11 +254,10 @@ export default function SignUp() {
               }}
             >
               <Button
-                type="submit"
                 variant="contained"
                 color="primary"
                 sx={{ mt: 3, mb: 2, mr: 2, backgroundColor:"button.buttonModest"}}
-                href="/login"
+                href="/"
               >
                 Cancelar
               </Button>
@@ -193,8 +265,9 @@ export default function SignUp() {
                 type="submit"
                 variant="contained"
                 sx={{ mt: 3, mb: 2,color:"white", backgroundColor:"button.buttonFlashy" }}
+                disabled={form.isSubmitting}
               >
-                Cadastrar
+                {form.isSubmitting?"Cadastrando...":"Cadastrar"}
               </Button>
             </Box>
 
