@@ -63,6 +63,7 @@ export default function SignUp() {
       email:'',
       login:'',
       password:'',
+      admin:false,
       terms:false,
     },
     validationSchema: validationSchema,
@@ -75,6 +76,7 @@ export default function SignUp() {
         endereco: formData.address,
         login: formData.login,
         senha: formData.password,
+        admin: formData.admin,
       }
       try {
         const data = await fetch(`${process.env.NEXT_PUBLIC_API}/usuarios`, {
@@ -90,7 +92,6 @@ export default function SignUp() {
         const userData = await userReq.json();
 
         setUser(userData);
-        console.log(userData);
         router.push("/")
 
       } catch (e){
@@ -221,32 +222,46 @@ export default function SignUp() {
                 />
               </Grid>
             </Grid>
-            <FormControlLabel
-              sx={{marginTop:"8px",marginX:"4px"}}
-              control={
-                <Checkbox
-                  checked={form.values.terms}
-                  onChange={form.handleChange}
-                  name="terms"
-                  color="primary"
-                />
-              }
-              label={
-                <p>
-                  Eu aceito os
-                  <Link
-                    href="/login"
-                  >
-                    {" Termos de Condições"}
-                  </Link>
-                </p>
-              }
-            />
-            {form.errors.terms && form.touched.terms && (
-              <Typography sx={{marginTop:"0px",marginX:"16px"}} color="error" variant="body2">
-                {form.errors.terms}
-              </Typography>
-            )}
+            <Box display="flex" flexDirection="column">
+              <FormControlLabel
+                sx={{marginTop:"8px",marginX:"4px"}}
+                control={
+                  <Checkbox
+                    checked={form.values.terms}
+                    onChange={form.handleChange}
+                    name="terms"
+                    color="primary"
+                  />
+                }
+                label={
+                  <p>
+                    Eu aceito os
+                    <Link
+                      href="/login"
+                    >
+                      {" Termos de Condições"}
+                    </Link>
+                  </p>
+                }
+              />
+              {form.errors.terms && form.touched.terms && (
+                <Typography sx={{marginTop:"0px",marginX:"16px"}} color="error" variant="body2">
+                  {form.errors.terms}
+                </Typography>
+              )}
+              <FormControlLabel
+                sx={{marginTop:"8px",marginX:"4px"}}
+                control={
+                  <Checkbox
+                    checked={form.values.admin}
+                    onChange={form.handleChange}
+                    name="admin"
+                    color="primary"
+                  />
+                }
+                label="Usuário Administrador"
+              />
+            </Box>
             <Box
               sx={{
                 display:'flex',

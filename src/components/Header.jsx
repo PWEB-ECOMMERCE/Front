@@ -1,10 +1,11 @@
 'use client';
 import { useState, useEffect, useContext } from 'react';
+import { useTheme } from '@mui/material/styles';
 
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
 import ShoppingCartIconOutlined from '@mui/icons-material/ShoppingCartOutlined';
-import { AppBar, Badge, Toolbar, Button, Box, Typography, Link as MUILink } from '@mui/material';
+import { useMediaQuery, AppBar, Badge, Toolbar, Button, Box, Typography, Link as MUILink } from '@mui/material';
 
 import Link from 'next/link';
 
@@ -18,16 +19,32 @@ const getInitialState = () => {
 export default function Header() {
 
   const { user, isAuthenticated, signOut } = useContext(AuthContext);
+  const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
 
   const [cart, setCart] = useState();
   const cartQnt = cart?.length;
 
   useEffect(() => {
-    const items = getInitialState();
-    if(items){
-      setCart(items);
-    }
+    const updateCart = () => {
+      const storedCart = JSON.parse(localStorage.getItem('cart')) || [];
+      setCart(storedCart);
+    };
+
+    updateCart();
+
+    window.addEventListener('cartUpdated', updateCart);
+
+    return () => window.removeEventListener('cartUpdated', updateCart);
   },[]);
+
+  // UseEffect(() => {
+  //   Const items = getInitialState();
+  //   If(items){
+  //     SetCart(items);
+  //   }
+  //
+  // },[]);
 
   return (
     <AppBar elevation={0} color='transparent' position='static' sx={{ height: 64, border: '1px solid grey' }}>
@@ -75,9 +92,12 @@ export default function Header() {
                 gap: 2,
                 mx: 2,
               }}>
-              <Button variant='outlined' sx={{ my: '20px', borderColor:'grey' }} color='secondary' onClick={signOut}>
+                <Button
+                  variant='outlined'
+                color='secondary' onClick={signOut}>
                 <MUILink underline="none" href="/" component={Link}>Sign Out</MUILink>
               </Button>
+                <Typography alignSelf='center'>Bem vindo, {user.nome}</Typography>
             </Box>
           }
           <Box
@@ -95,7 +115,7 @@ export default function Header() {
                 </Badge>
               </Button>
             )}
-            {!user?.isAdmin && (
+            {!user?.isAdmin && !isSmallScreen && (
               <Autocomplete
                 disableClearable
                 freeSolo

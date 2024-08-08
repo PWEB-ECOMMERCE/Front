@@ -23,10 +23,10 @@ import { AuthContext } from '@/contexts/AuthContext';
 
 
 const validationSchema = yup.object({
-  email: yup
-    .string('Digite seu email')
-    .email('Digite um email válido')
-    .required('O email é obrigatório'),
+  username: yup
+    .string('Digite seu nome de usuario'),
+    // .email('Digite um email válido')
+    // .required('O email é obrigatório'),
   password: yup
     .string('Digite seu password')
     .min(8,'A senha precisa conter no mínimo 8 caracteres')
@@ -44,21 +44,24 @@ function Login() {
   const router = useRouter();
   const formik = useFormik({
     initialValues: {
-      email: '',
+      username: '',
       password: '',
       admin: false,
       remember: false,
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
-      const { email, password } = values;
+      const { username, password } = values;
       try{
-        const result = await signIn({email,password})
+        const result = await signIn({username,password})
+
+        if (result.error){
+          router.push("/login");
+          throw new Error(result.error);
+        }
         router.push("/")
       } catch (err) {
-        console.log(err);
-      } finally{
-        console.log(error);
+        console.log(err.message);
       }
     }
   })
@@ -93,14 +96,14 @@ function Login() {
               margin="normal"
               required
               fullWidth
-              id="email"
-              name="email"
-              label="Email"
-              value={formik.values.email}
+              id="username"
+              name="username"
+              label="Nome do Usuário"
+              value={formik.values.username}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              error={formik.touched.email && Boolean(formik.errors.email)}
-              helperText={formik.touched.email && formik.errors.email}
+              error={formik.touched.username && Boolean(formik.errors.username)}
+              helperText={formik.touched.username && formik.errors.username}
               autoComplete="username"
               autoFocus
             />
@@ -126,14 +129,15 @@ function Login() {
                 marginX: '12px'
               }}
             >
-              <FormControlLabel
-                control={<Checkbox value="remember" color="primary" />}
-                label="Sou administrador"
-              />
+              {/* <FormControlLabel */}
+              {/*   Control={<Checkbox value="remember" color="primary" />} */}
+              {/*   Label="Sou administrador" */}
+              {/* /> */}
               <FormControlLabel
                 control={<Checkbox value="remember" color="primary" />}
                 label="Lembrar de mim"
               />
+              {error?<Typography color="red">{error}</Typography>:""}
             </Box>
             <Button
               type="submit"

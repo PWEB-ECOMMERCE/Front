@@ -1,39 +1,18 @@
 'use client';
-import { Box, Stack, List, ListItemButton, Link } from '@mui/material';
-import { useState, useContext } from 'react';
+import { Box, Stack, List, ListItemButton, Link, CircularProgress } from '@mui/material';
+import { useState, useEffect, useContext } from 'react';
+
+import NextLink from 'next/link'
 
 import { AuthContext } from '@/contexts/AuthContext';
-
-// Just for testing purposes
-// The structure should be a list of objects {label, href}
-const clientButtons = [
-  {name:'Inicio',to:'/'},
-  {name:'Meus Pedidos',to:'/'},
-  {name:'Produtos',to:'/'},
-  {name:'Conta',to:"/account"},
-  {name:'Sair',to:'/logout'},
-];
-const anonymousButtons = [
-  {name:'Inicio',to:'/'},
-  {name:'Produtos',to:'/'},
-];
-const adminButtons = [
-  {name:'Inicio',to:'/'},
-  {name:'Produtos e Categorias',to:'/'},
-  {name:'Vendas',to:'/'},
-  {name:'Conta',to:'/'},
-  {name:'Sair',to:'/logout'},
-];
+import { SideBarContext } from '@/contexts/SideBarContext';
 
 export default function SideBar() {
 
-  const { user } = useContext(AuthContext);
-  const [selectedIndex, setSelectedIndex] = useState(1);
-  const data = user ? (user?.isAdmin ? adminButtons : clientButtons) : anonymousButtons;
-  const handleListItemClick = (event,index) => {
-    setSelectedIndex(index)
-    console.log(user);
-  }
+  const { user, loading } = useContext(AuthContext);
+  const { links } = useContext(SideBarContext);
+  const data = user ? (user?.isAdmin ? links.admin : links.authenticated) : links.anonymous;
+
   return (
     <Stack sx={{border: '1px solid grey', borderWidth: '0 1px 0 1px', width: 248 }} direction='row'>
       <Stack
@@ -43,14 +22,14 @@ export default function SideBar() {
           width:'100%',
         }}>
         <List sx={{ py: 0 }}>
-          {data.map((item, index) => {
+          {data?.map((item, index) => {
               return (
                 <ListItemButton
                   key={index}
-                  selected={index === selectedIndex}
-                  onClick={(event)=> handleListItemClick(event,index)}
+                  // Selected={index === selected}
                   background='primary'
-                  component={Link}
+                  component={NextLink}
+                  // To={{'pathname':item.to,'query':{selected:index}}}
                   to={item.to}
                   sx={{
                     px: 2,

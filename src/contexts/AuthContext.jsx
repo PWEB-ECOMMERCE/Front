@@ -1,5 +1,6 @@
 import { useState, useEffect, createContext } from "react";
 import { useRouter } from 'next/navigation';
+import Cookies from 'js-cookies';
 
 export const AuthContext = createContext({});
 
@@ -18,7 +19,6 @@ export function AuthProvider({children}){
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [token, setToken] = useState(null);
   const isAuthenticated = !!user;
   const router = useRouter();
 
@@ -35,14 +35,13 @@ export function AuthProvider({children}){
     }
   }, [] )
 
-  const signIn = async ({email,password,admin}) => {
+
+  const signIn = async ({username,password,admin}) => {
     setLoading(true);
     setError(null);
-    const username = email;
 
     try {
-      // WARN: Ainda não temos essa endpoint na api
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API}/login/login`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API}/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -50,16 +49,15 @@ export function AuthProvider({children}){
         body: JSON.stringify({username, password})
       })
 
-      if (!response.ok) {
-        throw new Error('Falha no login!');
+      if (!response.ok){
+        throw new Error("Não foi possível fazer o login");
       }
-
       const userData = await response.json();
       setUser(userData);
-      return userData;
+      return {'data':userData, 'status':'ok'};
     } catch (err) {
       setError(err.message);
-      throw err;
+      return {'error':err.message}
     } finally {
       setLoading(false);
     }
@@ -67,7 +65,18 @@ export function AuthProvider({children}){
 
   async function signOut(){
     setUser(null);
+    try {
+      await fetch(`${process.env.NEXT_PUBLIC_API}/login/logout`, {
+        method: 'GET',
+        credentials: 'include'
+      })
+    } catch (error) {
+      console.error(error);
+      setError(error);
+    }
+    Cookies.removeItem("JSESSIONID", {path:'/', domain:'localhost'})
     localStorage.clear();
+    window.dispatchEvent(new Event('cartUpdated'));
     router.push("/");
   }
 
