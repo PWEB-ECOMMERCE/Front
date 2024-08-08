@@ -15,7 +15,7 @@ services:
       context: .
       dockerfile: ./Dockerfile.frontend
     ports:
-      - 6001:3000
+      - 3000:3000
     env_file:
       - path: ./.env.development
         required: false
@@ -74,6 +74,7 @@ services:
         required: false
     volumes:
       - db-data:/var/lib/postgresql/data
+      - ./database:/docker-entrypoint-initdb.d
     networks:
       - app_network
     healthcheck:
