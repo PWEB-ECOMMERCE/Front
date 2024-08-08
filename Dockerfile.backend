@@ -1,0 +1,32 @@
+ARG IMAGE=maven:3.8-amazoncorretto-21-al2023
+
+# Cloning our source code
+FROM alpine:latest as checkout
+LABEL org.opencontainers.image.authors="Dante de Araújo"
+# ADD github_pat_ To the next token (GIT_ACCESS_TOKEN) to work, but dont commit with the complete code
+ENV GIT_ACCESS_TOKEN=11AFBAO7A0lTdXgsbX0C4N_mgBrW4ZDnMQVLgIXxZyApaDZAyZsXZJrp62xC1Up8J0SV43UHHQtK0cGGCG
+WORKDIR /app
+RUN apk --no-cache add git \
+    && git clone https://dantearaujo1:${GIT_ACCESS_TOKEN}@github.com/PWEB-ECOMMERCE/Back.git backend \
+    && cd backend
+
+# Downloading our dependencies
+FROM ${IMAGE} AS deps
+WORKDIR /app
+COPY --from=checkout /app/backend/pom.xml .
+RUN mvn dependency:go-offline
+
+# Building the backend application withou database
+FROM ${IMAGE} AS build
+WORKDIR /app
+COPY --from=checkout /app/backend/ .
+COPY .env.development .
+COPY --from=deps /root/.m2/repository /root/.m2/repository
+RUN mvn package -DskipTests
+
+# The container that will run the application
+FROM amazoncorretto:21-alpine3.19-jdk
+WORKDIR /app
+COPY --from=build /app/target/*.jar app.jar
+EXPOSE 8080
+CMD ["java", "-jar", "app.jar"]

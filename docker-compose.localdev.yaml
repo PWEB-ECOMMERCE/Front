@@ -1,0 +1,19 @@
+services:
+  frontend:
+    volumes:
+      - type: bind
+        source: .
+        target: /home/app
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "smd@ufc.br"
+      PGADMIN_DEFAULT_PASSWORD: "smd"
+    ports:
+      - "16543:80"
+    depends_on:
+      database:
+        condition: service_healthy
+        restart: true
+    networks:
+      - app_network

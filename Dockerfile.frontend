@@ -1,0 +1,16 @@
+ARG node=node:18.20.2-slim
+
+FROM ${node} AS deps
+LABEL org.opencontainers.image.authors="Dante de Araújo"
+WORKDIR /home/app
+COPY package*.json yarn.lock ./
+RUN yarn install
+
+
+FROM ${node} AS development
+WORKDIR /home/app
+COPY --from=deps /home/app/node_modules ./node_modules
+COPY package.json ./
+COPY . .
+CMD [ "npm", "run", "dev"]
+
