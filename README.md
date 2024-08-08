@@ -19,14 +19,67 @@ loja. Outra funcionalidade que planejamos construir são alguns gráficos para q
 suas vendas ao longo do tempo.
 ## Como Rodar
 
-### Dependencias
+### Docker
+
+#### Dependencias
 - [docker](https://www.docker.com/)
 - docker-compose
+- banco de dados ecommerce ja criado no banco postgresql
+
+Edite o arquivo Dockerfile.backend para conter o TOKEN do github para que seja possivel clonar pelo docker. Você deve adicionar ao começo do GIT_ACCESS_TOKEN a palavra github_pat_
 
 Rode o seguinte comando no seu terminal
+
 ```bash
 docker-compose up
 ```
+
+### Local
+
+- nodejs
+- mvn
+- banco de dados ecommerce ja criado no banco postgresql
+
+Clone o projeto do front com o comando:
+
+```bash
+git clone https://github.com/PWEB-ECOMMERCE/Front.git
+```
+
+Instale as dependencias
+
+```bash
+npm install
+```
+
+Rode o projeto
+
+```bash
+npm run dev
+```
+
+O front-end deve estar nem http://localhost:3000/
+
+Clone o Backend:
+
+```bash
+git clone https://github.com/PWEB-ECOMMERCE/Back.git
+```
+
+Execute para instalar as dependências:
+
+```bash
+mvn install
+```
+
+Execute para rodar o backend:
+
+```bash
+mvn spring-boot:run
+```
+
+O Backend deve estar funcionando desde que o sgbd esteja ativo e com um banco ja
+criado. Pode usar a aplicação.
 
 ## Infra
 
