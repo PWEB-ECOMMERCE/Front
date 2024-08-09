@@ -8,7 +8,6 @@ import { productsMock } from "@/mocks/productsMock";
 
 import { AuthContext } from '@/contexts/AuthContext';
 
-console.log(productsMock)
 
 const categoryButtons = [
   {name:'Eletrônicos',to:'/'},
@@ -19,7 +18,6 @@ const categoryButtons = [
 
 export default function Shop() {
   const { user, isAuthenticated } = useContext(AuthContext);
-  console.log(user);
   return (
     <Box height={"full"} margin={"auto"} width={"100%"} textAlign={"center"} >
       {isAuthenticated
