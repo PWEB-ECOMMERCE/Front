@@ -32,7 +32,7 @@ Rode o seguinte comando no seu terminal
 
 ```bash
 # Mais abaixo tem como subir junto uma instancia do pgadmin em um comando só,
-fique a vontade para escolher.
+# fique a vontade para escolher.
 docker-compose up
 ```
 
