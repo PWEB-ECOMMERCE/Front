@@ -88,11 +88,16 @@ export default function SignUp() {
         })
 
         const userId = await data.json();
-        const userReq = await fetch(`${process.env.NEXT_PUBLIC_API}/usuarios/${userId.usuarioUUID}`)
-        const userData = await userReq.json();
+        try {
+            const userReq = await fetch(`${process.env.NEXT_PUBLIC_API}/usuarios/${userId.usuarioUUID}`)
+            const userData = await userReq.json();
+            setUser(userData);
+            router.push("/")
+        } catch (e) {
+          console.log("Não conseguiu entrar!")
+            router.push("/login")
+        }
 
-        setUser(userData);
-        router.push("/")
 
       } catch (e){
         console.log(e.message);
