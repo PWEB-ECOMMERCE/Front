@@ -1,10 +1,14 @@
-import { useContext } from 'react'
+'use client'
+import { useContext, useState } from 'react'
 import { Box } from '@mui/material';
 
 import Header from '@/components/Header';
 import SideBar from '@/components/SideBar';
+import Inicio from './Inicio'
 
-export default async function RootLayout({ children }) {
+export default function RootLayout({ children }) {
+
+  const [content, setContent] = useState(<Inicio/>);
 
   return (
     <div>
@@ -12,13 +16,13 @@ export default async function RootLayout({ children }) {
       <Box
         sx={{
           padding: '0px',
-          margin: '0px',
+          marginTop: '64px',
           minHeight: '100vh',
           display: 'flex',
           flexDirection: 'row',
         }}>
-        <SideBar></SideBar>
-        {children}
+        <SideBar handleContentChange={setContent}></SideBar>
+        {content}
       </Box>
     </div>
   )
