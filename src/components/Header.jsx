@@ -47,7 +47,7 @@ export default function Header() {
   // },[]);
 
   return (
-    <AppBar elevation={0} color='transparent' position='static' sx={{ height: 64, border: '1px solid grey' }}>
+    <AppBar elevation={0}  position='fixed' sx={{  borderBottom: '1px groove #cccccc', zIndex: (theme) => theme.zIndex.drawer + 1, backgroundColor: (theme) => theme.palette.primary.lighter }}>
       <Toolbar>
         <Typography
           variant='h6'
