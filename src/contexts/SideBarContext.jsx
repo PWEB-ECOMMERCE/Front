@@ -1,51 +1,34 @@
 import { useState, useEffect, createContext, useContext } from "react";
 import { useRouter } from 'next/navigation';
 import { AuthContext } from '@/contexts/AuthContext';
+import Inicio from '../app/(shop)/Inicio'
+import AccountForm from '../app/(shop)/DetalheConta'
 
 export const SideBarContext = createContext({});
 
 export function SideBarProvider({children}){
   const links = {
     anonymous: [
-      {name:'Inicio',to:'/'},
+      {name:'Inicio',to:'/', component:<Inicio/>},
     ],
     authenticated: [
-      {name:'Inicio',to:'/'},
+      {name:'Inicio',to:'/', component:<Inicio/>},
       {name:'Meus Pedidos',to:'/orders'},
       {name:'Produtos',to:'/products'},
-      {name:'Conta',to:"/account"},
+      {name:'Conta',to:"/account", component:<AccountForm/>},
       {name:'Sair',to:'/logout'},
     ],
     admin: [
-      {name:'Inicio',to:'/'},
+      {name:'Inicio',to:'/', component:<Inicio/>},
       {name:'Produtos e Categorias',to:'/'},
       {name:'Vendas',to:'/'},
-      {name:'Conta',to:'/'},
+      {name:'Conta',to:'/', component:<AccountForm/>},
       {name:'Sair',to:'/logout'},
     ]
   }
 
-  const [selection, setSelection] = useState(() => {
-    if (typeof window !== 'undefined') {
-
-      const savedIndex = localStorage.getItem('selectedIndex');
-      return savedIndex ? parseInt(savedIndex, 10) : 100;
-    }
-    return 0;
-  });
-
-  // Update localStorage whenever selectedIndex changes
-  const handleSetSelectedIndex = (index) => {
-    setSelection(index);
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('selectedIndex', index);
-    }
-  };
-
-
-
   return (
-    <SideBarContext.Provider value={{links, selection, handleSetSelectedIndex}}>
+    <SideBarContext.Provider value={{links}}>
       {children}
     </SideBarContext.Provider>
   )
