@@ -7,7 +7,6 @@ import SideBar from '@/components/SideBar';
 import Inicio from './Inicio'
 
 export default function RootLayout({ children }) {
-
   const [content, setContent] = useState(<Inicio/>);
 
   return (

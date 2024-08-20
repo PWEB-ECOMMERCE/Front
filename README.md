@@ -24,13 +24,15 @@ suas vendas ao longo do tempo.
 #### Dependencias
 - [docker](https://www.docker.com/)
 - docker-compose
-- banco de dados ecommerce ja criado no banco postgresql
+- ~~banco de dados ecommerce ja criado no banco postgresql (não precisa mais)~~
 
 Edite o arquivo Dockerfile.backend para conter o TOKEN do github para que seja possivel clonar pelo docker. Você deve adicionar ao começo do GIT_ACCESS_TOKEN a palavra github_pat_
 
 Rode o seguinte comando no seu terminal
 
 ```bash
+# Mais abaixo tem como subir junto uma instancia do pgadmin em um comando só,
+fique a vontade para escolher.
 docker-compose up
 ```
 

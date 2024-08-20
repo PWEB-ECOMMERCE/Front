@@ -78,21 +78,28 @@ export default function SignUp() {
         senha: formData.password,
         admin: formData.admin,
       }
+      
       try {
-        const data = await fetch(`${process.env.NEXT_PUBLIC_API}/usuarios`, {
+        const data = await fetch(`${process.env.NEXT_PUBLIC_API}/auth/register`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify(dataToSubmit)
         })
+       
+        const userId =  await data.json();
+        
+        try {
+            const userReq = await fetch(`${process.env.NEXT_PUBLIC_API}/usuarios/esp/${userId.usuarioUUID}`)
+            const userData = await userReq.json();
+            setUser(userData);
+            router.push("/")
+        } catch (e) {
+          console.log("Não conseguiu entrar!")
+            router.push("/login")
+        }
 
-        const userId = await data.json();
-        const userReq = await fetch(`${process.env.NEXT_PUBLIC_API}/usuarios/${userId.usuarioUUID}`)
-        const userData = await userReq.json();
-
-        setUser(userData);
-        router.push("/")
 
       } catch (e){
         console.log(e.message);
