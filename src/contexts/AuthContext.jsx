@@ -49,12 +49,12 @@ export function AuthProvider({children}){
         },
         body: JSON.stringify({username, password})
       })
-      
+
       if (!response.ok){
         throw new Error("Não foi possível fazer o login");
       }
       const userData = await response.json();
-      
+
       setUser(userData);
       return {'data':userData, 'status':'ok'};
     } catch (err) {
@@ -68,8 +68,8 @@ export function AuthProvider({children}){
   async function signOut(){
     setUser(null);
     try {
-      await fetch(`${process.env.NEXT_PUBLIC_API}/logout`, {
-        method: 'POST',
+      await fetch(`${process.env.NEXT_PUBLIC_API}/auth/logout`, {
+        method: 'GET',
         credentials: 'include'
       })
     } catch (error) {
