@@ -18,6 +18,7 @@ const categoryButtons = [
 
 export default function Shop() {
   const [produtos, setProdutos] = useState([])
+  const [categorias, setCategorias] = useState([])
   const { user, isAuthenticated } = useContext(AuthContext);
   const getProdutos = async () => {
     const produtosData = await fetch(`${process.env.NEXT_PUBLIC_API}/produto`, {
@@ -28,9 +29,18 @@ export default function Shop() {
     setProdutos(prodData);
     
   }
+  const getCategorias = async () => {
+    const categoriasData = await fetch(`${process.env.NEXT_PUBLIC_API}/categoria`, {
+      method: "GET",
+      credentials: "include"
+    })
+    const catData = await categoriasData.json();
+    setCategorias(catData);
+  }
 
   useEffect(() => {
     getProdutos();
+    getCategorias();
     
   }, [])
   
@@ -74,7 +84,7 @@ export default function Shop() {
               {produtos.map( (value,index) => {
                 return (
                   <Grid key={index} item xs={4} md={4}>
-                    <ProductCard data={value}></ProductCard>
+                    <ProductCard data={value.name}></ProductCard>
                   </Grid>
                 )
               } )}
@@ -84,7 +94,7 @@ export default function Shop() {
           <Box my={2} mx={2}>
             <Grid container spacing={1} my={4}>
               
-              {produtos.map( (value,index) => {
+              {categorias.map( (value,index) => {
                 return (
                   <Grid key={index} item xs={4} md={3}>
                     <Button
@@ -96,7 +106,7 @@ export default function Shop() {
                         height:100,
                       }}
                     >
-                      <Typography color="white">{value.name}</Typography>
+                      <Typography color="white">{value.descricao}</Typography>
                     </Button>
                   </Grid>
                 )
