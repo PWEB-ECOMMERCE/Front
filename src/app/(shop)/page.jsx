@@ -1,6 +1,6 @@
 // Import styles from './page.module.css'
 'use client';
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Box,Grid,Container, Button,Typography } from '@mui/material';
 import ProductCard from "@/components/ProductCard"
 import { productsMock } from "@/mocks/productsMock";
@@ -17,7 +17,24 @@ const categoryButtons = [
 ];
 
 export default function Shop() {
+  const [produtos, setProdutos] = useState([])
   const { user, isAuthenticated } = useContext(AuthContext);
+  const getProdutos = async () => {
+    const produtosData = await fetch(`${process.env.NEXT_PUBLIC_API}/produto`, {
+      method: "GET",
+      credentials: "include"
+    })
+    const prodData = await produtosData.json();
+    setProdutos(prodData);
+    
+  }
+
+  useEffect(() => {
+    getProdutos();
+    
+  }, [])
+  
+
   return (
     <Box height={"full"} margin={"auto"} width={"100%"} textAlign={"center"} >
       {isAuthenticated
@@ -53,7 +70,8 @@ export default function Shop() {
               } )}
             </Grid>
             <Grid container spacing={8}>
-              {productsMock.map( (value,index) => {
+              
+              {produtos.map( (value,index) => {
                 return (
                   <Grid key={index} item xs={4} md={4}>
                     <ProductCard data={value}></ProductCard>
@@ -65,7 +83,8 @@ export default function Shop() {
           :
           <Box my={2} mx={2}>
             <Grid container spacing={1} my={4}>
-              {categoryButtons.map( (value,index) => {
+              
+              {produtos.map( (value,index) => {
                 return (
                   <Grid key={index} item xs={4} md={3}>
                     <Button
@@ -84,7 +103,7 @@ export default function Shop() {
               } )}
             </Grid>
             <Grid container spacing={8}>
-              {productsMock.map( (value,index) => {
+              {produtos.map( (value,index) => {
                 return (
                   <Grid key={index} item xs={4} md={4}>
                     <ProductCard data={value} hide></ProductCard>
