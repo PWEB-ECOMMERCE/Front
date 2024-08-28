@@ -1,4 +1,4 @@
-import { Box,Button, Card, CardMedia, CardContent, Grid, Typography } from "@mui/material"
+import { Box, Button, Card, CardMedia, CardContent, Grid, Typography } from "@mui/material"
 import CardActions from "@mui/material/CardActions"
 
 export default function ProductCard({data, hide}) {

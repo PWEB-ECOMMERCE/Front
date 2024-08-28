@@ -77,10 +77,10 @@ export default function Header() {
                 mx: 2,
               }}>
               <Button variant='outlined' sx={{ my: '20px', borderColor:'grey' }} color='secondary'>
-                <MUILink underline="none" href="/login" component={Link}>Login</MUILink>
+                <MUILink underline="none" href="/login" component={Link}>Entrar</MUILink>
               </Button>
               <Button variant='outlined' sx={{ my: '20px', borderColor:'grey' }} color='secondary'>
-                <MUILink underline="none" href="/signup" component={Link}>Signup</MUILink>
+                <MUILink underline="none" href="/signup" component={Link}>Cadastrar</MUILink>
               </Button>
             </Box>
               :
@@ -95,7 +95,7 @@ export default function Header() {
                 <Button
                   variant='outlined'
                 color='secondary' onClick={signOut}>
-                <MUILink underline="none" href="/" component={Link}>Sign Out</MUILink>
+                <MUILink underline="none" href="/" component={Link}>Sair</MUILink>
               </Button>
                 <Typography alignSelf='center'>Bem vindo, {user.nome}</Typography>
             </Box>
