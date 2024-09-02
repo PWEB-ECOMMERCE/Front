@@ -22,7 +22,6 @@ export function SideBarProvider({children}){
       {name:'Sair',to:'/logout'},
     ],
     admin: [
-      {name:'Inicio',to:'/', component:<Inicio/>},
       {name:'Produtos e Categorias',to:'/', component: <AdminProducts2/>},
       {name:'Vendas',to:'/', component: <AdminSales/>},
       {name:'Conta',to:'/', component:<AccountForm/>},

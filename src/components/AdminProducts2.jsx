@@ -1,3 +1,4 @@
+/* eslint-disable */
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -56,10 +57,10 @@ const initialRows = [
 ];
 
 function EditToolbar(props) {
-  const { setRows, setRowModesModel } = props;
+  const { rows, setRows, setRowModesModel } = props;
 
   const handleClick = () => {
-    const id = randomId();
+    const id = randomId()
     setRows((oldRows) => [...oldRows, { id, descricao: '', quantidade: '', isNew: true }]);
     setRowModesModel((oldModel) => ({
       ...oldModel,
@@ -77,8 +78,52 @@ function EditToolbar(props) {
 }
 
 export default function FullFeaturedCrudGrid() {
-  const [rows, setRows] = React.useState(initialRows);
-  const [rowModesModel, setRowModesModel] = React.useState({});
+  const [rowsProducts, setRowsProducts] = React.useState();
+  const [rowsCategory, setRowsCategory] = React.useState(initialRows);
+  const [rowProductsModesModel, setRowProductsModesModel] = React.useState({});
+  const [rowCategoryModesModel, setRowCategoryModesModel] = React.useState({});
+
+  // Uma vez assim que a pagina carrega
+  React.useEffect( () => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch('http://localhost:8080/produto', {
+        })
+
+        if (response.status === 200){
+          const lista = await response.json()
+          setRowsProducts(lista)
+        }
+
+      } catch (error) {
+        console.error(error)
+      }
+    }
+
+    fetchData()
+    // const fetchData = async () => {
+    //   const response = await fetch('localhost:8080/produto', {
+    //     method: 'POST',
+    //     headers: {
+    //       'Content-Type': 'application/json'
+    //     },
+    //     body: JSON.stringify(
+    //       {
+    //         nome: "Nome do produto",
+    //         descricao: "Descrição do produto",
+    //         foto: "tananan.png",
+    //         preco: 200,
+    //         quantidade: 100,
+    //         categoria: 1,
+    //       }
+    //     )
+    //     }
+    //   )
+    // }
+
+    // console.log("Hello")
+  }, [] )
+
 
   const handleRowEditStop = (params, event) => {
     if (params.reason === GridRowEditStopReasons.rowFocusOut) {
@@ -90,11 +135,11 @@ export default function FullFeaturedCrudGrid() {
     setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
   };
 
-  const handleSaveClick = (id) => () => {
-    setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
+  const handleSaveClick = (id, setter) => () => {
+    setter((rowModesModel) => ({ ...rowModesModel, [id]: { mode: GridRowModes.View } }));
   };
 
-  const handleDeleteClick = (id) => () => {
+  const handleDeleteClick = (id, rows) => () => {
     setRows(rows.filter((row) => row.id !== id));
   };
 
@@ -110,9 +155,9 @@ export default function FullFeaturedCrudGrid() {
     }
   };
 
-  const processRowUpdate = (newRow) => {
+  const processRowUpdate = (newRow, rows, setter) => {
     const updatedRow = { ...newRow, isNew: false };
-    setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
+    setter(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
     return updatedRow;
   };
 
@@ -120,8 +165,93 @@ export default function FullFeaturedCrudGrid() {
     setRowModesModel(newRowModesModel);
   };
 
-  const columns = [
-    {field: 'id', headerName: 'ID', width: 180, editable: true},
+  const columnsProducts = [
+    {
+      field: 'index',
+      headerName: 'Index',
+      width: 80,
+      // This valueGetter returns the index of the row in the `rows` array
+      renderCell: (params) =>
+          params.api.getRowIndexRelativeToVisibleRows(params.row.id) + 1,
+    },
+    {
+      field: 'quantidade',
+      headerName: 'Quantidade',
+      type: 'number',
+      width: 80,
+      align: 'left',
+      headerAlign: 'left',
+      editable: true,
+    },
+    {
+      field: 'preco',
+      headerName: 'Preço',
+      type: 'number',
+      width: 180,
+      editable: true,
+    },
+    {
+      field: 'actions',
+      type: 'actions',
+      headerName: 'Ações',
+      width: 100,
+      cellClassName: 'actions',
+      getActions: ({ id }) => {
+        const isInEditMode = rowProductsModesModel[id]?.mode === GridRowModes.Edit;
+
+        if (isInEditMode) {
+          return [
+            <GridActionsCellItem
+              key={`${id}-save`}
+              icon={<SaveIcon />}
+              label="Save"
+              sx={{
+                color: 'primary.main',
+              }}
+              onClick={handleSaveClick(id)}
+            />,
+            <GridActionsCellItem
+              key={`${id}-cancel`}
+              icon={<CancelIcon />}
+              label="Cancel"
+              className="textPrimary"
+              onClick={handleCancelClick(id)}
+              color="inherit"
+            />,
+          ];
+        }
+
+        return [
+          <GridActionsCellItem
+            key={`${id}-edit`}
+            icon={<EditIcon />}
+            label="Edit"
+            className="textPrimary"
+            onClick={handleEditClick(id)}
+            color="inherit"
+          />,
+          <GridActionsCellItem
+            key={`${id}-delete`}
+            icon={<DeleteIcon />}
+            label="Delete"
+            onClick={handleDeleteClick(id, rowsProducts)}
+            color="inherit"
+          />,
+        ];
+
+      },
+    },
+  ];
+
+  const columnsCategory = [
+    {
+      field: 'index',
+      headerName: 'Index',
+      width: 80,
+      // This valueGetter returns the index of the row in the `rows` array
+      renderCell: (params) =>
+          params.api.getRowIndexRelativeToVisibleRows(params.row.id) + 1,
+    },
     { field: 'descricao', headerName: 'Descricao', width: 180, editable: true },
     {
       field: 'quantidade',
@@ -146,12 +276,12 @@ export default function FullFeaturedCrudGrid() {
       width: 100,
       cellClassName: 'actions',
       getActions: ({ id }) => {
-        const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
+        const isInEditMode = rowCategoryModesModel[id]?.mode === GridRowModes.Edit;
 
         if (isInEditMode) {
           return [
             <GridActionsCellItem
-              key={`${id}-save`}  
+              key={`${id}-save`}
               icon={<SaveIcon />}
               label="Save"
               sx={{
@@ -160,7 +290,7 @@ export default function FullFeaturedCrudGrid() {
               onClick={handleSaveClick(id)}
             />,
             <GridActionsCellItem
-              key={`${id}-cancel`}  
+              key={`${id}-cancel`}
               icon={<CancelIcon />}
               label="Cancel"
               className="textPrimary"
@@ -169,10 +299,10 @@ export default function FullFeaturedCrudGrid() {
             />,
           ];
         }
-        
+
         return [
           <GridActionsCellItem
-            key={`${id}-edit`}  
+            key={`${id}-edit`}
             icon={<EditIcon />}
             label="Edit"
             className="textPrimary"
@@ -180,14 +310,14 @@ export default function FullFeaturedCrudGrid() {
             color="inherit"
           />,
           <GridActionsCellItem
-            key={`${id}-delete`}  
+            key={`${id}-delete`}
             icon={<DeleteIcon />}
             label="Delete"
-            onClick={handleDeleteClick(id)}
+            onClick={handleDeleteClick(id, rowsProducts)}
             color="inherit"
           />,
         ];
-        
+
       },
     },
   ];
@@ -209,36 +339,36 @@ export default function FullFeaturedCrudGrid() {
         <h1>Produtos</h1>
       </div>
       <DataGrid
-        rows={rows}
-        columns={columns}
+        rows={rowsProducts}
+        columns={columnsProducts}
         editMode="row"
-        rowModesModel={rowModesModel}
+        rowModesModel={rowProductsModesModel}
         onRowModesModelChange={handleRowModesModelChange}
         onRowEditStop={handleRowEditStop}
-        processRowUpdate={processRowUpdate}
+        processRowUpdate={(newRow) => processRowUpdate(newRow, rowsProducts, setRowsProducts)}
         slots={{
           toolbar: EditToolbar,
         }}
         slotProps={{
-          toolbar: { setRows, setRowModesModel },
+          toolbar: { rows:rowsProducts,setRows:setRowsProducts, setRowModesModel:setRowProductsModesModel },
         }}
       />
       <div>
         <h1>Categoria</h1>
       </div>
       <DataGrid
-        rows={rows}
-        columns={columns}
+        rows={rowsCategory}
+        columns={columnsCategory}
         editMode="row"
-        rowModesModel={rowModesModel}
+        rowModesModel={rowCategoryModesModel}
         onRowModesModelChange={handleRowModesModelChange}
         onRowEditStop={handleRowEditStop}
-        processRowUpdate={processRowUpdate}
+        processRowUpdate={(newRow) => processRowUpdate(newRow, rowsCategory, setRowsCategory)}
         slots={{
           toolbar: EditToolbar,
         }}
         slotProps={{
-          toolbar: { setRows, setRowModesModel },
+          toolbar: { setRows:setRowsCategory, setRowModesModel:setRowCategoryModesModel },
         }}
       />
     </Box>

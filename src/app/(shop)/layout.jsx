@@ -1,13 +1,25 @@
 'use client'
-import { useContext, useState } from 'react'
+import { useContext, useState, useEffect } from 'react'
 import { Box } from '@mui/material';
 
 import Header from '@/components/Header';
 import SideBar from '@/components/SideBar';
+import AdminProducts2 from '@/components/AdminProducts2';
+import { AuthContext } from '@/contexts/AuthContext';
 import Inicio from './Inicio'
 
 export default function RootLayout({ children }) {
+  const { user, isAuthenticated } = useContext(AuthContext);
   const [content, setContent] = useState(<Inicio/>);
+
+  useEffect( () => {
+    if ( user?.admin ){
+      setContent(<AdminProducts2/>)
+    } else {
+      setContent(<Inicio/>)
+    }
+
+  }, [user] )
 
   return (
     <div>
