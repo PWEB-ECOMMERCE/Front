@@ -10,13 +10,14 @@ import { useMediaQuery, AppBar, Badge, Toolbar, Button, Box, Typography, Link as
 import Link from 'next/link';
 
 import { AuthContext } from '@/contexts/AuthContext';
+import Inicio from '../app/(shop)/Inicio'
 
 const getInitialState = () => {
   const items = localStorage.getItem("cart");
   return items ? JSON.parse(items) : null;
 }
 
-export default function Header() {
+export default function Header({handleContentChange}) {
 
   const { user, isAuthenticated, signOut } = useContext(AuthContext);
   const theme = useTheme();
@@ -94,9 +95,9 @@ export default function Header() {
               }}>
                 <Button
                   variant='outlined'
-                color='secondary' onClick={signOut}>
+                  color='secondary' onClick={()=>{signOut();handleContentChange(<Inicio/>)}}>
                 <MUILink underline="none" href="/" component={Link}>Sair</MUILink>
-              </Button>
+                </Button>
                 <Typography alignSelf='center'>Bem vindo, {user.nome}</Typography>
             </Box>
           }

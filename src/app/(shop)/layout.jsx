@@ -14,7 +14,7 @@ export default function RootLayout({ children }) {
 
   return (
     <div>
-      <Header search={false} cart={false}/>
+      <Header handleContentChange={setContent} search={false} cart={false}/>
       <Box
         sx={{
           padding: '0px',
