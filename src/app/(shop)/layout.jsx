@@ -12,15 +12,6 @@ export default function RootLayout({ children }) {
   const { user, isAuthenticated } = useContext(AuthContext);
   const [content, setContent] = useState(<Inicio/>);
 
-  useEffect( () => {
-    if ( user?.admin ){
-      setContent(<AdminProducts/>)
-    } else {
-      setContent(<Inicio/>)
-    }
-
-  }, [user] )
-
   return (
     <div>
       <Header search={false} cart={false}/>

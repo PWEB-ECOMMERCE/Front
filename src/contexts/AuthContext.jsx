@@ -80,6 +80,7 @@ export function AuthProvider({children}){
     localStorage.clear();
     window.dispatchEvent(new Event('cartUpdated'));
     router.push("/");
+    router.refresh();
   }
 
   return (

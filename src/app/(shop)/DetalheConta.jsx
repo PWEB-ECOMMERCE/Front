@@ -214,7 +214,7 @@ export default function AccountForm() {
               (<Button
                 type='button'
                 variant='contained'
-                onClick={()=>setEdit(true)}
+                onClick={()=>{setEdit(true);console.log("Hello")}}
                 sx={{
                   background:(theme)=>theme.palette.button.buttonFlashy,
                   color:'white'
