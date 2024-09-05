@@ -100,6 +100,14 @@ export default function FullFeaturedCrudGrid() {
   const [categories, setCategories] = React.useState();
   const [rowProductsModesModel, setRowProductsModesModel] = React.useState({});
   const [rowCategoryModesModel, setRowCategoryModesModel] = React.useState({});
+  const [ toUpdate, setToUpdate ] = React.useState();
+
+  React.useEffect( () => {
+    if (toUpdate){
+      // console.log(toUpdate.api.current.state.editRows[toUpdate.id]);
+      // toUpdate.update(toUpdate.api.current.getRow(toUpdate.id))
+    }
+  }, [toUpdate] )
 
   // READ PRODUCTS
   React.useEffect( () => {
@@ -120,36 +128,6 @@ export default function FullFeaturedCrudGrid() {
     fetchData()
   }, [] )
 
-    // UPDATE PRODUCT
-    const updateProduct = async (id, updatedProduct) => {
-      try {
-        const response = await fetch(`http://localhost:8080/produto/${id}`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: {
-            nome: '',
-            descricao: '',
-            imagem: '',
-            preco: '',
-            quantidade: '',
-            IDcategoria: ''
-          },
-        });
-
-        if (response.status === 200) {
-          const updatedProductData = await response.json();
-          setProducts((prevProducts) =>
-            prevProducts.map((produto) =>
-              produto.id === id ? updatedProductData : produto
-            )
-          );
-        }
-      } catch (error) {
-        console.error('Erro ao atualizar o produto:', error);
-      }
-    };
 
     // READ CATEGORY
     React.useEffect( () => {
@@ -183,8 +161,13 @@ export default function FullFeaturedCrudGrid() {
   const handleSaveClick = (api, itemId, setter,onSave) => () => {
     api.current.stopRowEditMode({id:itemId});
     setter((row) => ({ ...row, [itemId]: { mode: GridRowModes.View } }));
-    const item = api.current.getRow(itemId)
-    onSave(item)
+    const item = api.current.state.editRows[itemId]
+    const editedItem = {
+      id:itemId,
+      ...item
+    }
+    onSave(editedItem)
+    setToUpdate({ api:api, id:itemId, update:(item) => {onSave(item)}})
   };
 
   const handleDeleteClick = (id, setter, rows, onDelete) => () => {
@@ -233,8 +216,15 @@ export default function FullFeaturedCrudGrid() {
   };
 
   const editProduct = async (product) => {
-    console.log(product)
+    // console.log(product)
     const id = product.id
+    const editedItem = {
+      descricao:product.descricao.value,
+      foto:product.foto.value,
+      nome:product.nome.value,
+      preco:product.preco.value,
+      quantidade:product.quantidade.value,
+    }
     try {
       const response = await fetch(`http://localhost:8080/produto/esp/${id}`, {
         method: 'PATCH',
@@ -242,7 +232,7 @@ export default function FullFeaturedCrudGrid() {
           'Content-Type': 'application/json'
         },
         credentials: 'include',
-        body: JSON.stringify(product)
+        body: JSON.stringify(editedItem)
       });
 
     } catch (error) {
@@ -252,6 +242,9 @@ export default function FullFeaturedCrudGrid() {
 
   const editCategory = async (category) => {
     const id = category.id
+    const editedItem = {
+      descricao:category.descricao.value,
+    }
     try {
       const response = await fetch(`http://localhost:8080/categoria/esp/${id}`, {
         method: 'PATCH',
@@ -259,7 +252,7 @@ export default function FullFeaturedCrudGrid() {
           'Content-Type': 'application/json'
         },
         credentials: 'include',
-        body: JSON.stringify(category)
+        body: JSON.stringify(editedItem)
       });
 
     } catch (error) {
