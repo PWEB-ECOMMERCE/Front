@@ -4,7 +4,7 @@ import { Box } from '@mui/material';
 
 import Header from '@/components/Header';
 import SideBar from '@/components/SideBar';
-import AdminProducts2 from '@/components/AdminProducts2';
+import AdminProducts from '@/components/AdminProducts';
 import { AuthContext } from '@/contexts/AuthContext';
 import Inicio from './Inicio'
 
@@ -14,7 +14,7 @@ export default function RootLayout({ children }) {
 
   useEffect( () => {
     if ( user?.admin ){
-      setContent(<AdminProducts2/>)
+      setContent(<AdminProducts/>)
     } else {
       setContent(<Inicio/>)
     }
