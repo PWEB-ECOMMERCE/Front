@@ -36,7 +36,6 @@ export default function AccountForm() {
         const data = await fetch(`${process.env.NEXT_PUBLIC_API}/usuarios/esp/${user?.id}`, {
           method: "DELETE",
           credentials: 'include',
-          withCredentials: 'true'
         })
         signOut();
       } catch (e){

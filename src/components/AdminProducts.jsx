@@ -7,6 +7,8 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Close';
+import ModalProduto from './ModalProduto';
+import ModalCategoria from './ModalCategoria';
 
 import {
   GridRowModes,
@@ -14,56 +16,15 @@ import {
   GridToolbarContainer,
   GridActionsCellItem,
   GridRowEditStopReasons,
+  useGridApiContext,
 } from '@mui/x-data-grid';
 
 
 function EditToolbar(props) {
-  const { rows, setRows, setRowModesModel } = props;
+  const { rows, setRows, setRowModesModel, onOpenModal} = props;
 
   const handleClick = async () => {
-    // Cria o produto com valores padrão
-    const novoProduto = {
-      id: '',
-      nome: '',
-      descricao: '',
-      preco: '',
-      imagem_url: '',
-      quantidade: '',
-      cat_id: ''
-    };
-
-    try {
-      // Faz uma requisição POST para criar o produto no banco de dados
-      const response = await fetch('http://localhost:8080/produto', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(novoProduto)
-      });
-
-      if (!response.ok) {
-        throw new Error('Erro ao criar o produto');
-      }
-
-      // Obtém o ID do produto recém-criado a partir da resposta do backend
-      const data = await response.json();
-      const id = data.id; // Supondo que o backend retorne o id no campo 'id'
-
-      // Atualiza as linhas com o novo produto
-      setRows((oldRows) => [
-        ...oldRows,
-        { ...novoProduto, id, isNew: true }
-      ]);
-
-      // Configura o modo de edição para o novo produto
-      setRowModesModel((oldModel) => ({
-        ...oldModel,
-        [id]: { mode: GridRowModes.Edit},
-      }));
-    } catch (error) {
-      console.error('Erro ao criar o produto:', error);
-    }
+    onOpenModal();
   };
 
   return (
@@ -76,8 +37,67 @@ function EditToolbar(props) {
 }
 
 export default function FullFeaturedCrudGrid() {
-  const [rowsProducts, setRowsProducts] = React.useState();
-  const [rowsCategory, setRowsCategory] = React.useState();
+  const [openProductModal, setOpenProductModal] = React.useState(false);
+  const handleOpenProductModal = () => setOpenProductModal(true);
+  const handleCloseProductModal = () => setOpenProductModal(false);
+
+  const handleSaveProductModal = async (product) => {
+    try {
+      // Faz uma requisição POST para criar o produto no banco de dados
+      const response = await fetch('http://localhost:8080/produto', {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(product)
+      });
+
+      if ( response.ok ){
+        const newProduct = await response.json()
+        setProducts((oldRows) => [
+          ...oldRows,
+          { ...newProduct, id:newProduct.id, isNew: true }
+        ]);
+      }
+
+    } catch (error) {
+      console.error('Erro ao criar o produto:', error);
+    }
+  };
+
+  const [openCategoryModal, setOpenCategoryModal] = React.useState(false);
+  const handleOpenCategoryModal = () => setOpenCategoryModal(true);
+  const handleCloseCategoryModal = () => setOpenCategoryModal(false);
+
+  const handleSaveCategoryModal = async (categoria) => {
+    try {
+      // Faz uma requisição POST para criar o produto no banco de dados
+      const response = await fetch('http://localhost:8080/categoria', {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(categoria)
+      });
+
+      if ( response.ok ){
+        const newCategory = await response.json()
+        setCategories((oldRows) => [
+          ...oldRows,
+          { ...newCategory, id:newCategory.id, isNew: true }
+        ]);
+      }
+
+    } catch (error) {
+      console.error('Erro ao criar o produto:', error);
+    }
+  };
+
+
+  const [products, setProducts] = React.useState();
+  const [categories, setCategories] = React.useState();
   const [rowProductsModesModel, setRowProductsModesModel] = React.useState({});
   const [rowCategoryModesModel, setRowCategoryModesModel] = React.useState({});
 
@@ -90,7 +110,7 @@ export default function FullFeaturedCrudGrid() {
 
         if (response.status === 200){
           const lista = await response.json()
-          setRowsProducts(lista)
+          setProducts(lista)
         }
 
       } catch (error) {
@@ -108,20 +128,19 @@ export default function FullFeaturedCrudGrid() {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({
+          body: {
             nome: '',
             descricao: '',
             imagem: '',
             preco: '',
             quantidade: '',
-            IDcategoria: '',
-          }
-          ),
+            IDcategoria: ''
+          },
         });
-    
+
         if (response.status === 200) {
           const updatedProductData = await response.json();
-          setRowsProducts((prevProducts) =>
+          setProducts((prevProducts) =>
             prevProducts.map((produto) =>
               produto.id === id ? updatedProductData : produto
             )
@@ -132,58 +151,45 @@ export default function FullFeaturedCrudGrid() {
       }
     };
 
-    //DELETE PRODUCT
-    const deleteProduct = async (id) => {
-      try {
-        const response = await fetch(`http://localhost:8080/produto/${id}`, {
-          method: 'DELETE',
-        });
-    
-        if (response.status === 204) {
-          setRowsProducts((prevProducts) =>
-            prevProducts.filter((produto) => produto.id !== id)
-          );
-        }
-      } catch (error) {
-        console.error('Erro ao deletar o produto:', error);
-      }
-    };
-
     // READ CATEGORY
     React.useEffect( () => {
       const fetchData = async () => {
         try {
           const response = await fetch('http://localhost:8080/categoria', {
           })
-  
+
           if (response.status === 200){
             const lista = await response.json()
-            setRowsCategory(lista)
+            setCategories(lista)
           }
-  
+
         } catch (error) {
           console.error(error)
         }
       }
       fetchData()
     }, [] )
-  
+
   const handleRowEditStop = (params, event) => {
     if (params.reason === GridRowEditStopReasons.rowFocusOut) {
       event.defaultMuiPrevented = true;
     }
   };
 
-  const handleEditClick = (id, setter, row) => () => {
-    setter({ ...row, [id]: { mode: GridRowModes.Edit } });
+  const handleEditClick = (id, setter, rows, onEdit) => () => {
+    setter({ ...rows, [id]: { mode: GridRowModes.Edit } });
   };
 
-  const handleSaveClick = (id, setter, row) => () => {
-    setter((row) => ({ ...row, [id]: { mode: GridRowModes.View } }));
+  const handleSaveClick = (api, itemId, setter,onSave) => () => {
+    api.current.stopRowEditMode({id:itemId});
+    setter((row) => ({ ...row, [itemId]: { mode: GridRowModes.View } }));
+    const item = api.current.getRow(itemId)
+    onSave(item)
   };
 
-  const handleDeleteClick = (id, rows) => () => {
-    setRows(rows.filter((row) => row.id !== id));
+  const handleDeleteClick = (id, setter, rows, onDelete) => () => {
+    onDelete(id)
+    setter(rows.filter((row) => row.id !== id));
   };
 
   const handleCancelClick = (id, setter, row, rows) => () => {
@@ -200,6 +206,7 @@ export default function FullFeaturedCrudGrid() {
 
   const processRowUpdate = (newRow, rows, setter) => {
     const updatedRow = { ...newRow, isNew: false };
+    // onSave(updatedRow)
     setter(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
     return updatedRow;
   };
@@ -208,11 +215,79 @@ export default function FullFeaturedCrudGrid() {
     setRowModesModel(newRowModesModel);
   };
 
+  const deleteProduct = async (id) => {
+    try {
+      const response = await fetch(`http://localhost:8080/produto/esp/${id}`, {
+        method: 'DELETE',
+        credentials: 'include',
+      });
+
+      if (response.ok) {
+        setProducts((prevProducts) =>
+          prevProducts.filter((produto) => produto.id !== id)
+        );
+      }
+    } catch (error) {
+      console.error('Erro ao deletar o produto:', error);
+    }
+  };
+
+  const editProduct = async (product) => {
+    console.log(product)
+    const id = product.id
+    try {
+      const response = await fetch(`http://localhost:8080/produto/esp/${id}`, {
+        method: 'PATCH',
+        headers:{
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify(product)
+      });
+
+    } catch (error) {
+      console.error('Erro ao alterar o produto:', error);
+    }
+  };
+
+  const editCategory = async (category) => {
+    const id = category.id
+    try {
+      const response = await fetch(`http://localhost:8080/categoria/esp/${id}`, {
+        method: 'PATCH',
+        headers:{
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify(category)
+      });
+
+    } catch (error) {
+      console.error('Erro ao alterar a descrição:', error);
+    }
+  };
+  const deleteCategory = async (id) => {
+    try {
+      const response = await fetch(`http://localhost:8080/categoria/esp/${id}`, {
+        method: 'DELETE',
+        credentials: 'include'
+      });
+
+      if (response.status === 204) {
+        setCategories((prevCategories) =>
+          prevCategories.filter((category) => category.id !== id)
+        );
+      }
+    } catch (error) {
+      console.error('Erro ao deletar a categoria:', error);
+    }
+  };
+
   const columnsProducts = [
     {
       field: 'index',
       headerName: 'Index',
-      width: 80,
+      width: 60,
       // This valueGetter returns the index of the row in the `rows` array
       renderCell: (params) =>
           params.api.getRowIndexRelativeToVisibleRows(params.row.id) + 1,
@@ -220,7 +295,7 @@ export default function FullFeaturedCrudGrid() {
     {
       field: 'nome',
       headerName: 'Nome',
-      width: 80,
+      width: 240,
       align: 'left',
       headerAlign: 'left',
       editable: true,
@@ -228,7 +303,30 @@ export default function FullFeaturedCrudGrid() {
     {
       field: 'descricao',
       headerName: 'Descrição',
+      width: 160,
+      align: 'left',
+      headerAlign: 'left',
+      editable: true,
+    },
+    {
+      field: 'foto',
+      headerName: 'Imagem',
       width: 180,
+      align: 'left',
+      headerAlign: 'left',
+      editable: true,
+    },
+    {
+      field: 'categoria',
+      headerName: 'Categoria',
+      width: 160,
+      valueGetter: (value) => value.descricao
+    },
+    {
+      field: 'quantidade',
+      headerName: 'Quantidade',
+      type: 'number',
+      width: 80,
       align: 'left',
       headerAlign: 'left',
       editable: true,
@@ -241,37 +339,14 @@ export default function FullFeaturedCrudGrid() {
       editable: true,
     },
     {
-      field: 'imagem',
-      headerName: 'Imagem',
-      width: 180,
-      align: 'left',
-      headerAlign: 'left',
-      editable: true,
-    },
-    {
-      field: 'quantidade',
-      headerName: 'Quantidade',
-      type: 'number',
-      width: 80,
-      align: 'left',
-      headerAlign: 'left',
-      editable: true,
-    },
-    {
-      field: 'indexCat',
-      headerName: 'Index Categoria',
-      width: 80,
-      // This valueGetter returns the index of the row in the `rows` array
-      renderCell: (params) =>
-          params.api.getRowIndexRelativeToVisibleRows(params.row.id) + 1,
-    },
-    {
       field: 'actions',
       type: 'actions',
       headerName: 'Ações',
       width: 100,
       cellClassName: 'actions',
-      getActions: ({ id }) => {
+      getActions: (params) => {
+        const apiRef = useGridApiContext();
+        const id = params.id;
         const isInEditMode = rowProductsModesModel[id]?.mode === GridRowModes.Edit;
 
         if (isInEditMode) {
@@ -283,14 +358,14 @@ export default function FullFeaturedCrudGrid() {
               sx={{
                 color: 'primary.main',
               }}
-              onClick={handleSaveClick(id, setRowProductsModesModel, rowProductsModesModel)}
+              onClick={handleSaveClick(apiRef, id, setRowProductsModesModel, editProduct)}
             />,
             <GridActionsCellItem
               key={`${id}-cancel`}
               icon={<CancelIcon />}
               label="Cancel"
               className="textPrimary"
-              onClick={handleCancelClick(id, setRowProductsModesModel, rowProductsModesModel, rowsProducts)}
+              onClick={handleCancelClick(id, setRowProductsModesModel, rowProductsModesModel, products)}
               color="inherit"
             />,
           ];
@@ -302,14 +377,14 @@ export default function FullFeaturedCrudGrid() {
             icon={<EditIcon />}
             label="Edit"
             className="textPrimary"
-            onClick={handleEditClick(id, setRowProductsModesModel, rowProductsModesModel)}
+            onClick={handleEditClick(id, setRowProductsModesModel, rowProductsModesModel, editProduct)}
             color="inherit"
           />,
           <GridActionsCellItem
             key={`${id}-delete`}
             icon={<DeleteIcon />}
             label="Delete"
-            onClick={handleDeleteClick(id, rowsProducts)}
+            onClick={handleDeleteClick(id, setProducts, products, deleteProduct)}
             color="inherit"
           />,
         ];
@@ -334,7 +409,9 @@ export default function FullFeaturedCrudGrid() {
       headerName: 'Ações',
       width: 100,
       cellClassName: 'actions',
-      getActions: ({ id }) => {
+      getActions: (params) => {
+        const apiRef = useGridApiContext();
+        const id = params.id;
         const isInEditMode = rowCategoryModesModel[id]?.mode === GridRowModes.Edit;
 
         if (isInEditMode) {
@@ -346,14 +423,14 @@ export default function FullFeaturedCrudGrid() {
               sx={{
                 color: 'primary.main',
               }}
-              onClick={handleSaveClick(id, setRowCategoryModesModel, rowCategoryModesModel)}
+              onClick={handleSaveClick(apiRef, id, setRowCategoryModesModel, editCategory)}
             />,
             <GridActionsCellItem
               key={`${id}-cancel`}
               icon={<CancelIcon />}
               label="Cancel"
               className="textPrimary"
-              onClick={handleCancelClick(id, setRowCategoryModesModel, rowCategoryModesModel, rowsCategory)}
+              onClick={handleCancelClick(id, setRowCategoryModesModel, rowCategoryModesModel, categories)}
               color="inherit"
             />,
           ];
@@ -372,7 +449,7 @@ export default function FullFeaturedCrudGrid() {
             key={`${id}-delete`}
             icon={<DeleteIcon />}
             label="Delete"
-            onClick={handleDeleteClick(id, rowsCategory)}
+            onClick={handleDeleteClick(id, setCategories, categories, deleteCategory)}
             color="inherit"
           />,
         ];
@@ -382,54 +459,58 @@ export default function FullFeaturedCrudGrid() {
   ];
 
   return (
-    <Box
-      sx={{
-        height: 500,
-        width: '100%',
-        '& .actions': {
-          color: 'text.secondary',
-        },
-        '& .textPrimary': {
-          color: 'text.primary',
-        },
-      }}
-    >
-      <div>
-        <h1>Produtos</h1>
-      </div>
-      <DataGrid
-        rows={rowsProducts}
-        columns={columnsProducts}
-        editMode="row"
-        rowModesModel={rowProductsModesModel}
-        onRowModesModelChange={(newRowProductsModesModel, _) => setRowProductsModesModel(newRowProductsModesModel)}
-        onRowEditStop={handleRowEditStop}
-        processRowUpdate={(newRow) => processRowUpdate(newRow, rowsProducts, setRowsProducts)}
-        slots={{
-          toolbar: EditToolbar,
+    <Box  marginX={"auto"} width={"75%"}>
+      <Box
+        sx={{
+          height: 500,
+          width: '100%',
+          '& .actions': {
+            color: 'text.secondary',
+          },
+          '& .textPrimary': {
+            color: 'text.primary',
+          },
         }}
-        slotProps={{
-          toolbar: { rows:rowsProducts, setRows:setRowsProducts, setRowModesModel:setRowProductsModesModel },
-        }}
-      />
-      <div>
-        <h1>Categoria</h1>
-      </div>
-      <DataGrid
-        rows={rowsCategory}
-        columns={columnsCategory}
-        editMode="row"
-        rowModesModel={rowCategoryModesModel}
-        onRowModesModelChange={(newRowCategoryModesModel, _) => setRowCategoryModesModel(newRowCategoryModesModel)}
-        onRowEditStop={handleRowEditStop}
-        processRowUpdate={(newRow) => processRowUpdate(newRow, rowsCategory, setRowsCategory)}
-        slots={{
-          toolbar: EditToolbar,
-        }}
-        slotProps={{
-          toolbar: {rows:rowsCategory, setRows:setRowsCategory, setRowModesModel:setRowCategoryModesModel },
-        }}
-      />
+      >
+        <div>
+          <h1>Produtos</h1>
+        </div>
+        <ModalProduto open={openProductModal} handleClose={handleCloseProductModal} onSave={handleSaveProductModal} />
+        <DataGrid
+          rows={products}
+          columns={columnsProducts}
+          editMode="row"
+          rowModesModel={rowProductsModesModel}
+          onRowModesModelChange={(newRowProductsModesModel, _) => setRowProductsModesModel(newRowProductsModesModel)}
+          onRowEditStop={handleRowEditStop}
+          processRowUpdate={(newRow) => processRowUpdate(newRow, products, setProducts)}
+          slots={{
+            toolbar: EditToolbar,
+          }}
+          slotProps={{
+            toolbar: { rows:products, setRows:setProducts, setRowModesModel:setRowProductsModesModel, onOpenModal:handleOpenProductModal },
+          }}
+        />
+        <div>
+          <h1>Categoria</h1>
+        </div>
+        <ModalCategoria open={openCategoryModal} handleClose={handleCloseCategoryModal} onSave={handleSaveCategoryModal} />
+        <DataGrid
+          rows={categories}
+          columns={columnsCategory}
+          editMode="row"
+          rowModesModel={rowCategoryModesModel}
+          onRowModesModelChange={(newRowCategoryModesModel, _) => setRowCategoryModesModel(newRowCategoryModesModel)}
+          onRowEditStop={handleRowEditStop}
+          processRowUpdate={(newRow) => processRowUpdate(newRow, categories, setCategories)}
+          slots={{
+            toolbar: EditToolbar,
+          }}
+          slotProps={{
+            toolbar: {rows:categories, setRows:setCategories, setRowModesModel:setRowCategoryModesModel, onOpenModal:handleOpenCategoryModal },
+          }}
+        />
+      </Box>
     </Box>
 
   );
