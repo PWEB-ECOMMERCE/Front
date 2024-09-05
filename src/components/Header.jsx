@@ -10,13 +10,14 @@ import { useMediaQuery, AppBar, Badge, Toolbar, Button, Box, Typography, Link as
 import Link from 'next/link';
 
 import { AuthContext } from '@/contexts/AuthContext';
+import Inicio from '../app/(shop)/Inicio'
 
 const getInitialState = () => {
   const items = localStorage.getItem("cart");
   return items ? JSON.parse(items) : null;
 }
 
-export default function Header() {
+export default function Header({handleContentChange}) {
 
   const { user, isAuthenticated, signOut } = useContext(AuthContext);
   const theme = useTheme();
@@ -47,7 +48,7 @@ export default function Header() {
   // },[]);
 
   return (
-    <AppBar elevation={0} color='transparent' position='static' sx={{ height: 64, border: '1px solid grey' }}>
+    <AppBar elevation={0}  position='fixed' sx={{  borderBottom: '1px groove #cccccc', zIndex: (theme) => theme.zIndex.drawer + 1, backgroundColor: (theme) => theme.palette.primary.lighter }}>
       <Toolbar>
         <Typography
           variant='h6'
@@ -77,10 +78,10 @@ export default function Header() {
                 mx: 2,
               }}>
               <Button variant='outlined' sx={{ my: '20px', borderColor:'grey' }} color='secondary'>
-                <MUILink underline="none" href="/login" component={Link}>Login</MUILink>
+                <MUILink underline="none" href="/login" component={Link}>Entrar</MUILink>
               </Button>
               <Button variant='outlined' sx={{ my: '20px', borderColor:'grey' }} color='secondary'>
-                <MUILink underline="none" href="/signup" component={Link}>Signup</MUILink>
+                <MUILink underline="none" href="/signup" component={Link}>Cadastrar</MUILink>
               </Button>
             </Box>
               :
@@ -94,9 +95,9 @@ export default function Header() {
               }}>
                 <Button
                   variant='outlined'
-                color='secondary' onClick={signOut}>
-                <MUILink underline="none" href="/" component={Link}>Sign Out</MUILink>
-              </Button>
+                  color='secondary' onClick={()=>{signOut();handleContentChange(<Inicio/>)}}>
+                <MUILink underline="none" href="/" component={Link}>Sair</MUILink>
+                </Button>
                 <Typography alignSelf='center'>Bem vindo, {user.nome}</Typography>
             </Box>
           }

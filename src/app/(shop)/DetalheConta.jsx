@@ -33,9 +33,9 @@ export default function AccountForm() {
 
   const handleDelete = async () => {
       try {
-        const data = await fetch(`${process.env.NEXT_PUBLIC_API}/usuarios/${user?.id}`, {
+        const data = await fetch(`${process.env.NEXT_PUBLIC_API}/usuarios/esp/${user?.id}`, {
           method: "DELETE",
-          credentials: 'include'
+          credentials: 'include',
         })
         signOut();
       } catch (e){
@@ -79,16 +79,19 @@ export default function AccountForm() {
         senha: form.password,
       }
       try {
-        const data = await fetch(`${process.env.NEXT_PUBLIC_API}/usuarios/${user?.id}`, {
+        const data = await fetch(`${process.env.NEXT_PUBLIC_API}/usuarios/esp/${user?.id}`, {
           method: "PATCH",
-          credentials: 'include',
+          credentials: "include",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify(dataToSubmit)
         })
 
-        const userReq = await fetch(`${process.env.NEXT_PUBLIC_API}/usuarios/${user.id}`)
+        const userReq = await fetch(`${process.env.NEXT_PUBLIC_API}/usuarios/esp/${user.id}`, {
+          method: "GET",
+          credentials: "include"
+        })
         const userData = await userReq.json();
 
         setUser(userData);
@@ -211,7 +214,7 @@ export default function AccountForm() {
               (<Button
                 type='button'
                 variant='contained'
-                onClick={()=>setEdit(true)}
+                onClick={()=>{setEdit(true);console.log("Hello")}}
                 sx={{
                   background:(theme)=>theme.palette.button.buttonFlashy,
                   color:'white'
