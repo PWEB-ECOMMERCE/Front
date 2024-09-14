@@ -3,7 +3,6 @@
 import { useContext, useState, useEffect } from 'react';
 import { Box,Grid,Container, Button,Typography } from '@mui/material';
 import ProductCard from "@/components/ProductCard"
-import { productsMock } from "@/mocks/productsMock";
 
 import { AuthContext } from '@/contexts/AuthContext';
 
