@@ -36,7 +36,6 @@ export default function AccountForm() {
         const data = await fetch(`${process.env.NEXT_PUBLIC_API}/usuarios/esp/${user?.id}`, {
           method: "DELETE",
           credentials: 'include',
-          withCredentials: 'true'
         })
         signOut();
       } catch (e){
@@ -215,7 +214,7 @@ export default function AccountForm() {
               (<Button
                 type='button'
                 variant='contained'
-                onClick={()=>setEdit(true)}
+                onClick={()=>{setEdit(true);console.log("Hello")}}
                 sx={{
                   background:(theme)=>theme.palette.button.buttonFlashy,
                   color:'white'

@@ -1,9 +1,8 @@
 // Import styles from './page.module.css'
 'use client';
-import { useContext } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import { Box,Grid,Container, Button,Typography } from '@mui/material';
 import ProductCard from "@/components/ProductCard"
-import { productsMock } from "@/mocks/productsMock";
 
 import { AuthContext } from '@/contexts/AuthContext';
 
@@ -16,6 +15,25 @@ const categoryButtons = [
 
 export default function Inicio() {
   const { user, isAuthenticated } = useContext(AuthContext);
+  const [ products, setProducts ] = useState([]);
+
+  useEffect( () => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch('http://localhost:8080/produto', {
+        })
+
+        if (response.status === 200){
+          const lista = await response.json()
+          setProducts(lista)
+        }
+
+      } catch (error) {
+        console.error(error)
+      }
+    }
+    fetchData()
+  }, [] )
 
   return (
     <Box height={"full"} margin={"auto"} width={"100%"} textAlign={"center"} >
@@ -52,7 +70,7 @@ export default function Inicio() {
               } )}
             </Grid>
             <Grid container spacing={8}>
-              {productsMock.map( (value,index) => {
+              {products.map( (value,index) => {
                 return (
                   <Grid key={index} item xs={4} md={4}>
                     <ProductCard data={value}></ProductCard>
@@ -83,7 +101,7 @@ export default function Inicio() {
               } )}
             </Grid>
             <Grid container spacing={8}>
-              {productsMock.map( (value,index) => {
+              {products.map( (value,index) => {
                 return (
                   <Grid key={index} item xs={4} md={4}>
                     <ProductCard data={value} hide></ProductCard>
