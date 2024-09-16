@@ -5,6 +5,7 @@ import Inicio from '../app/(shop)/Inicio'
 import AccountForm from '../app/(shop)/DetalheConta'
 import AdminProducts from '@/components/AdminProducts';
 import AdminSales from "@/components/AdminSales";
+import ReportsPage from "@/components/reports/ReportsPage";
 
 export const SideBarContext = createContext({});
 
@@ -16,12 +17,12 @@ export function SideBarProvider({children}){
     authenticated: [
       {name:'Inicio',to:'/', component:<Inicio/>},
       {name:'Meus Pedidos',to:'/orders'},
-      {name:'Produtos',to:'/products', component: <AdminProducts/>},
       {name:'Conta',to:"/account", component:<AccountForm/>},
       {name:'Sair',to:'/logout'},
     ],
     admin: [
       {name:'Produtos e Categorias',to:'/', component: <AdminProducts/>},
+      {name:'Relatórios',to:'/', component: <ReportsPage/>},
       {name:'Vendas',to:'/', component: <AdminSales/>},
       {name:'Conta',to:'/', component:<AccountForm/>},
       {name:'Sair',to:'/logout'},
