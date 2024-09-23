@@ -10,7 +10,9 @@ import { useMediaQuery, AppBar, Badge, Toolbar, Button, Box, Typography, Link as
 import Link from 'next/link';
 
 import { AuthContext } from '@/contexts/AuthContext';
-import Inicio from '../app/(shop)/Inicio'
+import Inicio from '../app/(shop)/Inicio';
+import CartPage from '../app/(shop)/CartPage';
+
 
 const getInitialState = () => {
   const items = localStorage.getItem("cart");
@@ -110,7 +112,7 @@ export default function Header({handleContentChange}) {
               gap: 2,
             }}>
             {!user?.isAdmin && (
-              <Button color='primary'>
+              <Button color='primary' onClick={()=>{handleContentChange(<CartPage/>)}}>
                 <Badge badgeContent={cartQnt} color='secondary'>
                   <ShoppingCartIconOutlined></ShoppingCartIconOutlined>
                 </Badge>
