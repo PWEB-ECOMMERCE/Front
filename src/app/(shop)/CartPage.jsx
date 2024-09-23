@@ -1,12 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Container, Typography, Divider, Button } from '@mui/material';
 import CardCart from '@/components/CardCart';
 
 export default function CartPage() {
     const [products, setProducts] = useState([]);
 
+    // Função para carregar os produtos do localStorage
+    useEffect(() => {
+        const savedProducts = localStorage.getItem('cart');
+        if (savedProducts) {
+            setProducts(JSON.parse(savedProducts));
+        }
+    }, []);
+
     const calculateTotal = () => {
-        return products.reduce((acc, product) => acc + product.price * product.quantity, 0).toFixed(2);
+        return products.reduce((acc, product) => acc + product.preco * product.quantidade, 0).toFixed(2);
     };
 
     return (
@@ -19,28 +27,23 @@ export default function CartPage() {
             {products.map((product) => (
                 <CardCart
                     key={product.id}
-                    name={product.name}
-                    price={product.price}
+                    name={product.nome}
+                    price={product.preco}
                     initialQuantity={product.quantity}
                 />
             ))}
 
             <Divider sx={{ margin: '20px 0' }} />
 
-
             <Typography variant="h5">Total: R$ {calculateTotal()}</Typography>
-
 
             <Button variant="contained" color="primary" sx={{ marginTop: 2 }}>
                 Finalizar Compra
             </Button>
 
-
             <Button variant="contained" color="primary" sx={{ marginTop: 2 }}>
-                    Voltar à Página Inicial
-                
+                Voltar à Página Inicial
             </Button>
-
         </Container>
     );
 }
