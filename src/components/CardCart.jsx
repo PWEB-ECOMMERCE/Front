@@ -1,17 +1,23 @@
 import React, { useState } from 'react';
-import { Card, CardContent, Grid2, Typography, IconButton } from '@mui/material';
+import { Card, CardContent, Grid, Typography, IconButton } from '@mui/material';
 import { Add, Remove } from '@mui/icons-material';
 
-export default function CardCart({ name, price, initialQuantity }) {
-    const [quantity, setQuantity] = useState(initialQuantity);
+export default function CardCart({ id, name, price, quant, stock, onUpdateQuantity }) {
+    const [quantity, setQuantity] = useState(quant);
 
     const handleAdd = () => {
-        setQuantity((prevQuantity) => prevQuantity + 1);
+        if (quantity < stock) {
+            const newQuantity = quantity + 1;
+            setQuantity(newQuantity);
+            onUpdateQuantity(id, newQuantity); 
+        }
     };
 
     const handleRemove = () => {
         if (quantity > 1) {
-            setQuantity((prevQuantity) => prevQuantity - 1);
+            const newQuantity = quantity - 1;
+            setQuantity(newQuantity);
+            onUpdateQuantity(id, newQuantity); 
         }
     };
 
@@ -20,16 +26,16 @@ export default function CardCart({ name, price, initialQuantity }) {
     return (
         <Card sx={{ maxWidth: 600, margin: '20px auto' }}>
             <CardContent>
-                <Grid2 container spacing={2} alignItems="center">
+                <Grid container spacing={2} alignItems="center">
                     {/* Nome */}
-                    <Grid2 item xs={3}>
+                    <Grid item xs={3}>
                         <Typography variant="body1" component="div">
                             {name}
                         </Typography>
-                    </Grid2>
+                    </Grid>
 
                     {/* Quantidade */}
-                    <Grid2 item xs={3}>
+                    <Grid item xs={3}>
                         <IconButton onClick={handleRemove} size="small" aria-label="remove">
                             <Remove />
                         </IconButton>
@@ -39,22 +45,22 @@ export default function CardCart({ name, price, initialQuantity }) {
                         <IconButton onClick={handleAdd} size="small" aria-label="add">
                             <Add />
                         </IconButton>
-                    </Grid2>
+                    </Grid>
 
                     {/* Preço */}
-                    <Grid2 item xs={3}>
+                    <Grid item xs={3}>
                         <Typography variant="body1" component="div">
                             R$ {price.toFixed(2)}
                         </Typography>
-                    </Grid2>
+                    </Grid>
 
                     {/* Subtotal */}
-                    <Grid2 item xs={3}>
+                    <Grid item xs={3}>
                         <Typography variant="body1" component="div">
                             R$ {subtotal.toFixed(2)}
                         </Typography>
-                    </Grid2>
-                </Grid2>
+                    </Grid>
+                </Grid>
             </CardContent>
         </Card>
     );
