@@ -39,9 +39,9 @@ export default function ReportsPage() {
 
     // Printable content
     const PrintableContent = React.forwardRef((props, ref) => (
-        <Box ref={ref}>
+        <Box ref={ref} flex alignContent="center">
             <Typography variant='h5' sx={{ marginBottom: '20px', marginLeft: '40px', marginTop: '40px' }}>Vendas Report</Typography>
-            <table style={{ width: '100%', borderCollapse: 'collapse', marginX: '40px',marginBottom: '40px',pageBreakAfter: 'always' }}>
+            <table style={{ width: '80%', borderCollapse: 'collapse', margin:'0 auto',marginBottom: '40px',pageBreakAfter: 'always' }}>
                 <thead>
                     <tr>
                         <th style={{ border: '1px solid black', padding: '8px' }}>ID</th>
@@ -61,7 +61,7 @@ export default function ReportsPage() {
             </table>
 
             <Typography variant='h5' sx={{ marginBottom: '20px', marginLeft: '40px', marginTop: '40px' }}>Produtos em Falta Report</Typography>
-            <table style={{ width: '100%', borderCollapse: 'collapse', marginX: '40px',marginBottom: '40px',pageBreakAfter: 'always' }}>
+            <table style={{ width: '80%', borderCollapse: 'collapse', margin:'0 auto',marginBottom: '40px',pageBreakAfter: 'always' }}>
                 <thead>
                     <tr>
                         <th style={{ border: '1px solid black', padding: '8px' }}>ID</th>
@@ -81,7 +81,7 @@ export default function ReportsPage() {
             </table>
 
             <Typography variant='h5' sx={{ marginBottom: '20px', marginLeft: '40px', marginTop: '40px' }}>Saldo Report</Typography>
-            <table style={{ width: '100%', borderCollapse: 'collapse', marginX: '40px',marginBottom: '40px',pageBreakAfter: 'always' }}>
+            <table style={{ width: '80%', borderCollapse: 'collapse', margin:'0 auto',marginBottom: '40px',pageBreakAfter: 'always' }}>
                 <thead>
                     <tr>
                         <th style={{ border: '1px solid black', padding: '8px' }}>Data</th>
