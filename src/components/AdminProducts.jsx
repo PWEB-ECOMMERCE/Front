@@ -158,14 +158,18 @@ export default function FullFeaturedCrudGrid() {
     setter({ ...rows, [id]: { mode: GridRowModes.Edit } });
   };
 
-  const handleSaveClick = (api, itemId, setter,onSave) => () => {
-    api.current.stopRowEditMode({id:itemId});
-    setter((row) => ({ ...row, [itemId]: { mode: GridRowModes.View } }));
+  const handleSaveClick = (api, itemId, setter, onSave) => () => {
     const item = api.current.state.editRows[itemId]
     const editedItem = {
       id:itemId,
       ...item
     }
+    if (editedItem.quantidade.value < 0){
+      console.log("Valor Inválido")
+      return
+    }
+    api.current.stopRowEditMode({id:itemId});
+    setter((row) => ({ ...row, [itemId]: { mode: GridRowModes.View } }));
     onSave(editedItem)
     setToUpdate({ api:api, id:itemId, update:(item) => {onSave(item)}})
   };
@@ -225,6 +229,8 @@ export default function FullFeaturedCrudGrid() {
       preco:product.preco.value,
       quantidade:product.quantidade.value,
     }
+    
+
     try {
       const response = await fetch(`http://localhost:8080/produto/esp/${id}`, {
         method: 'PATCH',
