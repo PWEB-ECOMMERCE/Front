@@ -19,7 +19,7 @@ const getInitialState = () => {
   return items ? JSON.parse(items) : null;
 }
 
-export default function Header({handleContentChange}) {
+export default function Header({handleContentChange, search}) {
 
   const { user, isAuthenticated, signOut } = useContext(AuthContext);
   const theme = useTheme();
@@ -106,14 +106,14 @@ export default function Header({handleContentChange}) {
               alignItems: 'center',
               gap: 2,
             }}>
-            {!user?.isAdmin && (
+            {!(user?.admin) && (
               <Button color='primary' onClick={()=>{handleContentChange(<CartPage handleContentChange={handleContentChange}/>)}}>
                 <Badge badgeContent={cartQnt} color='secondary'>
                   <ShoppingCartIconOutlined></ShoppingCartIconOutlined>
                 </Badge>
               </Button>
             )}
-            {!user?.isAdmin && !isSmallScreen && (
+            {!user?.admin && !isSmallScreen && (
               <Autocomplete
                 disableClearable
                 freeSolo
