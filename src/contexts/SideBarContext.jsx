@@ -19,14 +19,12 @@ export function SideBarProvider({children}){
       {name:'Inicio',to:'/', component:<Inicio/>},
       {name:'Meus Pedidos',to: '/', component:<ClientOrders/>},
       {name:'Conta',to:"/account", component:<AccountForm/>},
-      {name:'Sair',to:'/logout'},
     ],
     admin: [
       {name:'Produtos e Categorias',to:'/', component: <AdminProducts/>},
       {name:'Relatórios',to:'/', component: <ReportsPage/>},
       {name:'Vendas',to:'/', component: <AdminSales/>},
       {name:'Conta',to:'/', component:<AccountForm/>},
-      {name:'Sair',to:'/logout'},
     ]
   }
 

@@ -26,7 +26,8 @@ export default function Header({handleContentChange}) {
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
 
   const [cart, setCart] = useState();
-  const cartQnt = cart?.length;
+  const cartQnt = cart?.reduce((acc, product) => acc + product.quant, 0);
+
 
   useEffect(() => {
     const updateCart = () => {
@@ -41,13 +42,7 @@ export default function Header({handleContentChange}) {
     return () => window.removeEventListener('cartUpdated', updateCart);
   },[]);
 
-  // UseEffect(() => {
-  //   Const items = getInitialState();
-  //   If(items){
-  //     SetCart(items);
-  //   }
-  //
-  // },[]);
+
 
   return (
     <AppBar elevation={0}  position='fixed' sx={{  borderBottom: '1px groove #cccccc', zIndex: (theme) => theme.zIndex.drawer + 1, backgroundColor: (theme) => theme.palette.primary.lighter }}>
@@ -112,7 +107,7 @@ export default function Header({handleContentChange}) {
               gap: 2,
             }}>
             {!user?.isAdmin && (
-              <Button color='primary' onClick={()=>{handleContentChange(<CartPage/>)}}>
+              <Button color='primary' onClick={()=>{handleContentChange(<CartPage handleContentChange={handleContentChange}/>)}}>
                 <Badge badgeContent={cartQnt} color='secondary'>
                   <ShoppingCartIconOutlined></ShoppingCartIconOutlined>
                 </Badge>

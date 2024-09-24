@@ -10,14 +10,16 @@ export default function CardCart({ id, name, price, quant, stock, onUpdateQuanti
             const newQuantity = quantity + 1;
             setQuantity(newQuantity);
             onUpdateQuantity(id, newQuantity); 
+            window.dispatchEvent(new Event('cartUpdated'));
         }
     };
 
     const handleRemove = () => {
-        if (quantity > 1) {
+        if (quantity > 0) {
             const newQuantity = quantity - 1;
             setQuantity(newQuantity);
-            onUpdateQuantity(id, newQuantity); 
+            onUpdateQuantity(id, newQuantity);
+            window.dispatchEvent(new Event('cartUpdated')); 
         }
     };
 

@@ -12,6 +12,7 @@ export default function ProductCard({ data, hide }) {
       const productWithQuantity = { ...product, quant: 1 }; 
       cart.push(productWithQuantity);
       localStorage.setItem('cart', JSON.stringify(cart));
+      window.dispatchEvent(new Event('cartUpdated'));
     }
   };
   
