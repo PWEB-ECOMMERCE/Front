@@ -50,8 +50,8 @@ export default function ReportsPage() {
                     </tr>
                 </thead>
                 <tbody>
-                    {salesData.map((row) => (
-                        <tr key={row.id}>
+                    {salesData.map((row,index) => (
+                        <tr key={index}>
                             <td style={{ border: '1px solid black', padding: '8px' }}>{row.idCliente}</td>
                             <td style={{ border: '1px solid black', padding: '8px' }}>{row.nomeDoCliente}</td>
                             <td style={{ border: '1px solid black', padding: '8px' }}>{row.qtdCompras}</td>
@@ -89,8 +89,8 @@ export default function ReportsPage() {
                     </tr>
                 </thead>
                 <tbody>
-                    {balanceData.map((row) => (
-                        <tr key={row.id}>
+                    {balanceData.map((row,index) => (
+                        <tr key={index}>
                             <td style={{ border: '1px solid black', padding: '8px' }}>{row.data}</td>
                             <td style={{ border: '1px solid black', padding: '8px' }}>{row.valorTotal}</td>
                         </tr>
