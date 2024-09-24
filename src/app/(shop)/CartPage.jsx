@@ -5,7 +5,8 @@ import Inicio from './Inicio';
 
 export default function CartPage({ handleContentChange }) {
     const [products, setProducts] = useState([]);
-    const [successMessage, setSuccessMessage] = useState(false); 
+    const [successMessage, setSuccessMessage] = useState(false);
+    const [errorMessage, setErrorMessage] = useState(false); 
 
     useEffect(() => {
         const savedProducts = localStorage.getItem('cart');
@@ -26,13 +27,18 @@ export default function CartPage({ handleContentChange }) {
             return updatedProducts;
         });
     };
-    
 
     const calculateTotal = () => {
         return products.reduce((acc, product) => acc + product.preco * product.quant, 0).toFixed(2);
     };
 
     const handleFinalizePurchase = async () => {
+        
+        if (products.length === 0 || products.every(product => product.quant === 0)) {
+            setErrorMessage(true); 
+            return;
+        }
+
         const user = localStorage.getItem('user');
         const userJson = JSON.parse(user);
 
@@ -67,6 +73,7 @@ export default function CartPage({ handleContentChange }) {
         } catch (error) {
             console.error('Erro:', error);
         }
+        window.dispatchEvent(new Event('cartUpdated'));
     };
 
     return (
@@ -112,13 +119,25 @@ export default function CartPage({ handleContentChange }) {
                 Finalizar Compra
             </Button>
 
+            
             <Snackbar
                 open={successMessage}
-                autoHideDuration={4000} 
-                onClose={() => setSuccessMessage(false)} 
+                autoHideDuration={4000}
+                onClose={() => setSuccessMessage(false)}
             >
                 <Alert onClose={() => setSuccessMessage(false)} severity="success">
                     Compra realizada com sucesso!
+                </Alert>
+            </Snackbar>
+
+            
+            <Snackbar
+                open={errorMessage}
+                autoHideDuration={4000}
+                onClose={() => setErrorMessage(false)}
+            >
+                <Alert onClose={() => setErrorMessage(false)} severity="error">
+                    O carrinho está vazio ou a quantidade de produtos é zero!
                 </Alert>
             </Snackbar>
         </Container>
