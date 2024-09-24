@@ -39,7 +39,7 @@
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.15.15",
     "@mui/lab": "6.0.0-beta.9",
-    "@mui/material": "^5.15.13",
+    "@mui/material": "6.0.2",
     "@mui/x-data-grid": "^7.13.0",
     "@mui/x-date-pickers": "^7.17.0",
     "dayjs": "^1.11.13",
@@ -50,6 +50,7 @@
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.53.0",
     "react-to-print": "^2.15.1",
+    "react-router-dom": "^6.26.2",
     "yup": "^1.4.0"
   },
   "config": {
