@@ -28,6 +28,7 @@ export default function SalesReport({setData, dates, setDate, isPrinting}) {
             const end = endDate.toISOString().split('T')[0];
             try {
                 const response = await fetch(`http://localhost:8080/relatorio/compras?data=${start}&endData=${end}`, {
+                credentials: 'include'
                 })
 
                 if (response.status === 200) {
