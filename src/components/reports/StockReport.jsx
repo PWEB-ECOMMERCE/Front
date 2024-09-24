@@ -9,7 +9,7 @@ import {
     useGridApiContext,
 } from '@mui/x-data-grid';
 
-export default function StockReport() {
+export default function StockReport({setData, dates, setDate, isPrinting}) {
 
     const [products, setProducts] = React.useState();
     const [rowSalesModesModel, setRowSalesModesModel] = React.useState({});
@@ -25,6 +25,7 @@ export default function StockReport() {
                     const products = await response.json()
                     console.log(products)
                     setProducts(products)
+                    setData(products);
                 }
 
             } catch (error) {
@@ -102,6 +103,8 @@ export default function StockReport() {
                   columns={columns}
                   rowModesModel={rowSalesModesModel}
                   pageSizeOptions={5}
+                  hideFooter={isPrinting}
+                  disableColumnMenu={isPrinting}
               />
           </Box>
       </Box>

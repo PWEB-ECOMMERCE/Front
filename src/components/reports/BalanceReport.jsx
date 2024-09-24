@@ -13,12 +13,12 @@ import {
     useGridApiContext,
 } from '@mui/x-data-grid';
 
-export default function BalanceReport() {
+export default function BalanceReport({setData, dates, setDate, isPrinting}) {
 
     const [balance, setBalance] = React.useState();
     const today = new Date().toISOString().split('T')[0];
-    const [startDate, setStartDate] = React.useState(dayjs(today));
-    const [endDate, setEndDate] = React.useState(dayjs(today));
+    const [startDate, setStartDate] = React.useState(dates[0]);
+    const [endDate, setEndDate] = React.useState(dates[1]);
     const [rowSalesModesModel, setRowSalesModesModel] = React.useState({});
 
     // READ SALES
@@ -32,8 +32,9 @@ export default function BalanceReport() {
 
                 if (response.status === 200) {
                     const balance = await response.json()
-                    console.log(balance)
-                    setBalance(balance.map( (value,index) => {return {id:index,data:value.data.reverse().join('/'),valorTotal:value.valorTotal}} ))
+                    const data = balance.map( (value,index) => {return {id:index,data:value.data.reverse().join('/'),valorTotal:value.valorTotal}} )
+                    setBalance(data)
+                    setData(data)
                 }
 
             } catch (error) {
@@ -55,7 +56,8 @@ export default function BalanceReport() {
             headerName: 'Valor Total Recebido (R$)',
             headerAlign: 'left',
             type: 'string',
-            flex: 1,
+            flex: isPrinting ? 0 : 1,
+            width: isPrinting? 160: null,
             editable: false,
         },
     ];
@@ -63,10 +65,57 @@ export default function BalanceReport() {
 
 
     return (
-      <Box marginX={"auto"} width={"75%"}>
+      <Box marginX={"auto"} width={"75%"} marginTop={"8px"} sx={{
+                  height: 500,
+      }}>
           <LocalizationProvider dateAdapter={AdapterDayjs} >
-            <DatePicker format="DD/MM/YYYY" label="Período Inicial" value={startDate} onChange={(newValue) => setStartDate(newValue)} sx={{mr:2}}></DatePicker>
-            <DatePicker format="DD/MM/YYYY" label="Período Final" value={endDate} onChange={(newValue) => setStartDate(newValue)}></DatePicker>
+            <DatePicker
+              format="DD/MM/YYYY"
+              label="Período Inicial"
+              value={startDate}
+              onChange={
+                (newValue) => {
+                  setStartDate(newValue)
+                  setDate((prev) => {
+                    // Create a copy of the previous state array
+                    const newState = [...prev];
+
+                    // Update the first element
+                    newState[0] = newValue;  // Replace 'new value' with the actual value you want to set
+
+                    // Return the updated state
+                    return newState;
+                  });
+                }
+              }
+              sx={{mr:2}}
+            ></DatePicker>
+            <DatePicker
+              format="DD/MM/YYYY"
+              label="Período Final"
+              value={endDate}
+              onChange={
+                (newValue) => {
+                  setStartDate(newValue)
+                  setDate((prev) => {
+                    // Create a copy of the previous state array
+                    const newState = [...prev];
+
+                    // Check if the array has at least two elements
+                    if (newState.length >= 2) {
+                      // Update the second element (index 1) if it exists
+                      newState[1] = newValue;  // Replace 'new value' with the actual value you want to set
+                    } else {
+                      // If the second element doesn't exist, you can choose to add it or handle it some other way
+                      newState[1] = newValue;  // This will add a second element if needed
+                    }
+
+                    // Return the updated state
+                    return newState;
+                    });
+                }
+              }
+            ></DatePicker>
           </LocalizationProvider>
           <Box
               sx={{
@@ -83,10 +132,16 @@ export default function BalanceReport() {
           >
               <DataGrid
                   rows={balance}
+                  sx={{
+                    width:"100%"
+                  }}
                   columns={columns}
                   rowModesModel={rowSalesModesModel}
                   getRowId={row => row.id}
+                  autosizeOnMount={isPrinting}
                   pageSizeOptions={5}
+                  hideFooter={isPrinting}
+                  disableColumnMenu={isPrinting}
               />
           </Box>
       </Box>

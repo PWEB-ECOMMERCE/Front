@@ -13,12 +13,12 @@ import {
     useGridApiContext,
 } from '@mui/x-data-grid';
 
-export default function SalesReport() {
+export default function SalesReport({setData, dates, setDate, isPrinting}) {
 
-    const [sales, setSales] = React.useState();
+    const [sales, setSales] = React.useState([]);
     const today = new Date().toISOString().split('T')[0];
-    const [startDate, setStartDate] = React.useState(dayjs(today));
-    const [endDate, setEndDate] = React.useState(dayjs(today));
+    const [startDate, setStartDate] = React.useState(dates[0]?dates[0]:null);
+    const [endDate, setEndDate] = React.useState(dates[1]);
     const [rowSalesModesModel, setRowSalesModesModel] = React.useState({});
 
     // READ SALES
@@ -32,8 +32,8 @@ export default function SalesReport() {
 
                 if (response.status === 200) {
                     const sales = await response.json()
-                    console.log(sales)
                     setSales(sales)
+                    setData(sales);
                 }
 
             } catch (error) {
@@ -71,22 +71,81 @@ export default function SalesReport() {
 
 
     return (
-      <Box marginX={"auto"} width={"75%"}>
+      <Box marginX={"auto"} marginTop={"8px"} width={"75%"} height={"500px"}>
           <LocalizationProvider dateAdapter={AdapterDayjs} >
-            <DatePicker format="DD/MM/YYYY" label="Período Inicial" value={startDate} onChange={(newValue) => setStartDate(newValue)} sx={{mr:2}}></DatePicker>
-            <DatePicker format="DD/MM/YYYY" label="Período Final" value={endDate} onChange={(newValue) => setStartDate(newValue)}></DatePicker>
+            <DatePicker
+              format="DD/MM/YYYY"
+              label="Período Inicial"
+              value={startDate}
+              onChange={
+                (newValue) => {
+                  setStartDate(newValue);
+                  setDate((prev) => {
+                    // Create a copy of the previous state array
+                    const newState = [...prev];
+
+                    // Update the first element
+                    newState[0] = newValue;  // Replace 'new value' with the actual value you want to set
+
+                    // Return the updated state
+                    return newState;
+                  });
+                }
+              }
+              sx={{mr:2}}
+            ></DatePicker>
+            <DatePicker
+              format="DD/MM/YYYY"
+              label="Período Final"
+              value={endDate}
+              onChange={
+                (newValue) => {
+                  setEndDate(newValue)
+
+                  setDate((prev) => {
+                    // Create a copy of the previous state array
+                    const newState = [...prev];
+
+                    // Check if the array has at least two elements
+                    if (newState.length >= 2) {
+                      // Update the second element (index 1) if it exists
+                      newState[1] = newValue;  // Replace 'new value' with the actual value you want to set
+                    } else {
+                      // If the second element doesn't exist, you can choose to add it or handle it some other way
+                      newState[1] = newValue;  // This will add a second element if needed
+                    }
+
+                    // Return the updated state
+                    return newState;
+                    });
+                }
+
+              }
+            ></DatePicker>
           </LocalizationProvider>
           <Box
               sx={{
-                  height: 500,
+                  height: isPrinting ? 200 : 500,
                   mt:2,
-                  width: '100%',
+                  width: isPrinting ? '100vw' :'100%',
                   '& .actions': {
                       color: 'text.secondary',
                   },
                   '& .textPrimary': {
                       color: 'text.primary',
                   },
+                  '@media print': {
+                    '.MuiDataGrid-root': {
+                        width: '100% !important',
+                        overflow: 'visible !important',
+                    },
+                    '.MuiDataGrid-columnHeader, .MuiDataGrid-cell': {
+                        padding: '4px',
+                    },
+                    '.MuiDataGrid-virtualScroller': {
+                        height: 'auto !important',
+                    },
+                },
               }}
           >
               <DataGrid
@@ -95,6 +154,9 @@ export default function SalesReport() {
                   getRowId={(row) => row.idCliente}
                   rowModesModel={rowSalesModesModel}
                   pageSizeOptions={5}
+                  pageSize={isPrinting ? sales.length : 10}
+                  hideFooter={isPrinting}
+                  disableColumnMenu={isPrinting}
               />
           </Box>
       </Box>
