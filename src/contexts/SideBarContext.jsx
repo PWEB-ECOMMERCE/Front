@@ -21,8 +21,8 @@ export function SideBarProvider({children}){
       {name:'Conta',to:"/account", component:<AccountForm/>},
     ],
     admin: [
-      {name:'Produtos e Categorias',to:'/', component: <AdminProducts/>},
       {name:'Relatórios',to:'/', component: <ReportsPage/>},
+      {name:'Produtos e Categorias',to:'/', component: <AdminProducts/>},
       {name:'Vendas',to:'/', component: <AdminSales/>},
       {name:'Conta',to:'/', component:<AccountForm/>},
     ]

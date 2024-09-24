@@ -4,6 +4,7 @@ import { useContext, useState, useEffect } from 'react';
 import { styled, Box,Grid,Container, Button,Typography } from '@mui/material';
 
 import ProductCard from "@/components/ProductCard"
+import ReportsPage from "@/components/reports/ReportsPage";
 import { AuthContext } from '@/contexts/AuthContext';
 
 const ScrollableBox = styled(Box)(({ theme }) => ({
@@ -136,12 +137,9 @@ export default function Inicio() {
       ?
       user.admin ?
       (
-        <Container style={{ textAlign: 'center' }}>
-              <Typography variant="h2" gutterBottom>
-                Em Construção
-              </Typography>
-              <Box component="img" src="/construction.png" alt="Em Construção" sx={{ width: '100%', margin: 'auto' }} />
-            </Container>
+        <Box minHeight="100vh">
+          <ReportsPage></ReportsPage>
+        </Box>
       )
           :
           <Box my={2} mx={2} minHeight="100vh">
