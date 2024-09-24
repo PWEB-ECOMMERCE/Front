@@ -33,7 +33,7 @@ export default function BalanceReport() {
                 if (response.status === 200) {
                     const balance = await response.json()
                     console.log(balance)
-                    setBalance(balance)
+                    setBalance(balance.map( (value,index) => {return {id:index,data:value.data.reverse().join('/'),valorTotal:value.valorTotal}} ))
                 }
 
             } catch (error) {
@@ -85,6 +85,7 @@ export default function BalanceReport() {
                   rows={balance}
                   columns={columns}
                   rowModesModel={rowSalesModesModel}
+                  getRowId={row => row.id}
                   pageSizeOptions={5}
               />
           </Box>

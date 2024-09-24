@@ -45,13 +45,13 @@ export default function SalesReport() {
 
     const columns = [
         {
-          field: 'usuario_id',
+          field: 'idCliente',
           headerName: 'Id do Cliente',
           headerAlign: 'left',
           width: 160,
         },
         {
-            field: 'nome',
+            field: 'nomeDoCliente',
             headerName: 'Nome do Cliente',
             headerAlign: 'left',
             type: 'string',
@@ -59,8 +59,8 @@ export default function SalesReport() {
             editable: false,
         },
         {
-            field: 'vendas',
-            headerName: 'Gasto em Compras',
+            field: 'qtdCompras',
+            headerName: 'Quantidade de Compras',
           headerAlign: 'left',
             type: 'number',
             flex: 1,
@@ -92,6 +92,7 @@ export default function SalesReport() {
               <DataGrid
                   rows={sales}
                   columns={columns}
+                  getRowId={(row) => row.idCliente}
                   rowModesModel={rowSalesModesModel}
                   pageSizeOptions={5}
               />
