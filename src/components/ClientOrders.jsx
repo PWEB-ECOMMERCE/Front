@@ -11,12 +11,14 @@ export default function ClientOrders() {
     const [sales, setSales] = React.useState([]);
     const [rowSalesModesModel, setRowSalesModesModel] = React.useState({});
     
+    const user = localStorage.getItem('user');
+        const userJson = JSON.parse(user);
+        console.log(userJson.id)
+
       useEffect(() => {
-        console.log("debi");
-        console.log("debi");
         const fetchData = async () => {
           try {
-            const response = await fetch('http://localhost:8080/venda/esp/b2fd337e-726f-4028-8697-01d8b837a324', {credentials:"include"});
+            const response = await fetch(`http://localhost:8080/venda/esp/${userJson.id}`, {credentials:"include"});
             console.log(response);
 
             if (response.ok) { 
