@@ -19,6 +19,7 @@ export default function AdminSales() {
         const fetchData = async () => {
             try {
                 const response = await fetch('http://localhost:8080/venda', {
+                credentials: 'include'
                 })
 
                 if (response.status === 200) {

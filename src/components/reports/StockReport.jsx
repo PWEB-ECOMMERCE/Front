@@ -19,6 +19,7 @@ export default function StockReport({setData, dates, setDate, isPrinting}) {
         const fetchData = async () => {
             try {
                 const response = await fetch(`http://localhost:8080/relatorio/produtosEsgotados`, {
+                credentials: 'include'
                 })
 
                 if (response.status === 200) {
