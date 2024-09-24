@@ -1,7 +1,7 @@
 import { Box, Button, Card, CardMedia, CardContent, Grid, Typography } from "@mui/material";
 import CardActions from "@mui/material/CardActions";
 
-export default function ProductCard({ data, hide }) {
+export default function ProductCard({ data, hide, outOfStock }) {
 
   // Função para adicionar produtos ao carrinho e salvar no localStorage
   const handleAddToCart = (product) => {
@@ -9,13 +9,13 @@ export default function ProductCard({ data, hide }) {
     const cart = currentCart ? JSON.parse(currentCart) : [];
     const doesNotExist = !cart.some(element => element.id === product.id);
     if(doesNotExist){
-      const productWithQuantity = { ...product, quant: 1 }; 
+      const productWithQuantity = { ...product, quant: 1 };
       cart.push(productWithQuantity);
       localStorage.setItem('cart', JSON.stringify(cart));
       window.dispatchEvent(new Event('cartUpdated'));
     }
   };
-  
+
 
   return (
     <Card>
@@ -56,13 +56,22 @@ export default function ProductCard({ data, hide }) {
         </Grid>
       </CardContent>
       <CardActions sx={{ display: "flex", marginBottom: "4px", justifyContent: "flex-end" }}>
-        {!hide && (
+        {!hide && outOfStock && (
           <Button
-            onClick={() => handleAddToCart(data)} 
+            onClick={() => handleAddToCart(data)}
             sx={{ backgroundColor: "button.buttonFlashy", color: "white" }}
             variant="contained"
           >
             Adicionar ao Carrinho
+          </Button>
+        )}
+        {!hide && !outOfStock && (
+          <Button
+            disabled
+            sx={{ backgroundColor: "primary.main", color: "white" }}
+            variant="contained"
+          >
+            Sem estoque
           </Button>
         )}
       </CardActions>

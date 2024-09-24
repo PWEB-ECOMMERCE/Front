@@ -164,6 +164,13 @@ export default function Inicio() {
             </ScrollableBox>
             <Grid container spacing={8}>
               {products.map( (value,index) => {
+                if (value.quantidade > 0){
+                  return (
+                    <Grid key={index} item xs={4} md={4}>
+                      <ProductCard data={value} outOfStock></ProductCard>
+                    </Grid>
+                  )
+                }
                 return (
                   <Grid key={index} item xs={4} md={4}>
                     <ProductCard data={value}></ProductCard>
